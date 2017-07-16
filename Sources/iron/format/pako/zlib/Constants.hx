@@ -1,4 +1,4 @@
-package arm.pako.zlib;
+package iron.format.pako.zlib;
 
 //NOTE(hx): reconvert these to enum abstracts over Int (watching out for recursion and comparisons)
 

@@ -1,16 +1,16 @@
-package arm.pako;
+package iron.format.pako;
 
 import haxe.io.UInt8Array;
 import haxe.zip.FlushMode;
-import arm.pako.Deflate.DeflateOptions;
-import arm.pako.Inflate.InflateOptions;
-import arm.pako.zlib.Deflate as ZlibDeflate;
-import arm.pako.utils.Common;
-import arm.pako.zlib.Messages;
-import arm.pako.zlib.ZStream;
-import arm.pako.zlib.Constants;
-import arm.pako.zlib.Constants.CompressionLevel;
-import arm.pako.zlib.GZHeader;
+import iron.format.pako.Deflate.DeflateOptions;
+import iron.format.pako.Inflate.InflateOptions;
+import iron.format.pako.zlib.Deflate as ZlibDeflate;
+import iron.format.pako.utils.Common;
+import iron.format.pako.zlib.Messages;
+import iron.format.pako.zlib.ZStream;
+import iron.format.pako.zlib.Constants;
+import iron.format.pako.zlib.Constants.CompressionLevel;
+import iron.format.pako.zlib.GZHeader;
 
 
 class Pako
@@ -48,7 +48,7 @@ class Pako
    * var pako = require('pako')
    *   , data = Uint8Array([1,2,3,4,5,6,7,8,9]);
    *
-   * console.log(arm.pako.deflate(data));
+   * console.log(iron.format.pako.deflate(data));
    * ```
    **/
   static public function deflate(input:UInt8Array, ?options:DeflateOptions) {
@@ -123,11 +123,11 @@ class Pako
    *
    * ```javascript
    * var pako = require('pako')
-   *   , input = arm.pako.deflate([1,2,3,4,5,6,7,8,9])
+   *   , input = iron.format.pako.deflate([1,2,3,4,5,6,7,8,9])
    *   , output;
    *
    * try {
-   *   output = arm.pako.inflate(input);
+   *   output = iron.format.pako.inflate(input);
    * } catch (err)
    *   console.log(err);
    * }

@@ -1,8 +1,8 @@
-package arm.pako.zlib;
+package iron.format.pako.zlib;
 
 import haxe.io.UInt8Array;
-import arm.pako.zlib.Deflate.DeflateState;
-import arm.pako.zlib.Inflate.InflateState;
+import iron.format.pako.zlib.Deflate.DeflateState;
+import iron.format.pako.zlib.Inflate.InflateState;
 
 class ZStream
 {

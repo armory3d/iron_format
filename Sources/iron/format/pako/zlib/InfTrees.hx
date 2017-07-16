@@ -1,8 +1,8 @@
-package arm.pako.zlib;
+package iron.format.pako.zlib;
 
 import haxe.io.Int32Array;
 import haxe.io.UInt16Array;
-import arm.pako.zlib.Constants;
+import iron.format.pako.zlib.Constants;
 
 
 typedef Options = {

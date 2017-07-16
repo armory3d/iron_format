@@ -1,18 +1,18 @@
-package arm.pako.zlib;
+package iron.format.pako.zlib;
 
 import haxe.io.Int32Array;
 import haxe.io.UInt16Array;
 import haxe.io.UInt8Array;
-import arm.pako.utils.Common;
-import arm.pako.zlib.Adler32;
-import arm.pako.zlib.CRC32;
-import arm.pako.zlib.InfFast;
-import arm.pako.zlib.InfTrees;
-import arm.pako.zlib.ZStream;
-import arm.pako.zlib.Constants;
+import iron.format.pako.utils.Common;
+import iron.format.pako.zlib.Adler32;
+import iron.format.pako.zlib.CRC32;
+import iron.format.pako.zlib.InfFast;
+import iron.format.pako.zlib.InfTrees;
+import iron.format.pako.zlib.ZStream;
+import iron.format.pako.zlib.Constants;
 
 
-@:allow(arm.pako.zlib.InfFast)
+@:allow(iron.format.pako.zlib.InfFast)
 class Inflate
 {
   static inline var inflateInfo:String = 'pako inflate (from Nodeca project)';
@@ -1603,8 +1603,8 @@ class Inflate
 }
 
 
-@:allow(arm.pako.zlib.Inflate)
-@:allow(arm.pako.zlib.InfFast)
+@:allow(iron.format.pako.zlib.Inflate)
+@:allow(iron.format.pako.zlib.InfFast)
 class InflateState 
 {
   var mode:Int = 0;             /* current inflate mode */

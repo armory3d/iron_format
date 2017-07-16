@@ -24,7 +24,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
  */
-package arm.format.tools;
+package iron.format.tools;
 
 class Deflate {
 
@@ -34,7 +34,7 @@ class Deflate {
 		// return haxe.zip.Compress.run(b,level);
 		
 		var input = haxe.io.UInt8Array.fromBytes(b);
-		var output = arm.pako.Pako.deflate(input);
+		var output = iron.format.pako.Pako.deflate(input);
 		return output.view.buffer;
 
 		// #else

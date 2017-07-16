@@ -1,4 +1,4 @@
-package arm.pako.zlib;
+package iron.format.pako.zlib;
 
 import haxe.io.UInt8Array;
 

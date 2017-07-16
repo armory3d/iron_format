@@ -1,8 +1,8 @@
-package arm.pako.zlib;
+package iron.format.pako.zlib;
 
 import haxe.io.Int32Array;
-import arm.pako.zlib.Inflate.InflateState;
-import arm.pako.zlib.ZStream;
+import iron.format.pako.zlib.Inflate.InflateState;
+import iron.format.pako.zlib.ZStream;
 
 class InfFast
 {

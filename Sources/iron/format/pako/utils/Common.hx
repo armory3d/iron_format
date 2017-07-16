@@ -1,4 +1,4 @@
-package arm.pako.utils;
+package iron.format.pako.utils;
 
 import haxe.io.ArrayBufferView;
 import haxe.io.UInt8Array;

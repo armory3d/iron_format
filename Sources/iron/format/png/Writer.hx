@@ -24,8 +24,8 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
  */
-package arm.format.png;
-import arm.format.png.Data;
+package iron.format.png;
+import iron.format.png.Data;
 
 class Writer {
 

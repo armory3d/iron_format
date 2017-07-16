@@ -1,11 +1,11 @@
-package arm.pako.zlib;
+package iron.format.pako.zlib;
 
 import haxe.ds.Vector;
 import haxe.io.ArrayBufferView;
 import haxe.io.UInt16Array;
-import arm.pako.zlib.Constants;
-import arm.pako.utils.Common;
-import arm.pako.zlib.Deflate.DeflateState;
+import iron.format.pako.zlib.Constants;
+import iron.format.pako.utils.Common;
+import iron.format.pako.zlib.Deflate.DeflateState;
 
 
 /* Public constants ==========================================================*/
@@ -1211,7 +1211,7 @@ class Trees
   }
 }
 
-@:allow(arm.pako.zlib.Trees)
+@:allow(iron.format.pako.zlib.Trees)
 class StaticTreeDesc
 {
   var static_tree:UInt16Array;
@@ -1234,7 +1234,7 @@ class StaticTreeDesc
   }
 }
 
-@:allow(arm.pako.zlib.Trees)
+@:allow(iron.format.pako.zlib.Trees)
 class TreeDesc 
 {
   var dyn_tree:UInt16Array;

@@ -1,15 +1,15 @@
-package arm.pako;
+package iron.format.pako;
 
 import haxe.io.UInt8Array;
 import haxe.zip.FlushMode;
-import arm.pako.Deflate.DeflateOptions;
-import arm.pako.zlib.Deflate as ZlibDeflate;
-import arm.pako.utils.Common;
-import arm.pako.zlib.Messages;
-import arm.pako.zlib.ZStream;
-import arm.pako.zlib.Constants;
-import arm.pako.zlib.Constants.CompressionLevel;
-import arm.pako.zlib.GZHeader;
+import iron.format.pako.Deflate.DeflateOptions;
+import iron.format.pako.zlib.Deflate as ZlibDeflate;
+import iron.format.pako.utils.Common;
+import iron.format.pako.zlib.Messages;
+import iron.format.pako.zlib.ZStream;
+import iron.format.pako.zlib.Constants;
+import iron.format.pako.zlib.Constants.CompressionLevel;
+import iron.format.pako.zlib.GZHeader;
 
 
 typedef DeflateOptions = {
@@ -124,7 +124,7 @@ var Z_DEFLATED  = 8;
  *   , chunk1 = Uint8Array([1,2,3,4,5,6,7,8,9])
  *   , chunk2 = Uint8Array([10,11,12,13,14,15,16,17,18,19]);
  *
- * var deflate = new arm.pako.Deflate({ level: 3});
+ * var deflate = new iron.format.pako.Deflate({ level: 3});
  *
  * deflate.push(chunk1, false);
  * deflate.push(chunk2, true);  // true -> last chunk

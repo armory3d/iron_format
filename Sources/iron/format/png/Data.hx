@@ -24,7 +24,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
  */
-package arm.format.png;
+package iron.format.png;
 
 enum Color {
 	ColGrey( alpha : Bool ) ; // 1|2|4|8|16 without alpha , 8|16 with alpha

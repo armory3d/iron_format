@@ -27,7 +27,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
  */
-package arm.format.jpg;
+package iron.format.jpg;
 
 class Writer {
 	var ZigZag: Array<Int>;

@@ -1,7 +1,7 @@
-package arm.pako.zlib;
+package iron.format.pako.zlib;
 
 import haxe.ds.IntMap;
-import arm.pako.zlib.Constants;
+import iron.format.pako.zlib.Constants;
 
 //NOTE(hx): might as well refactor Error to be over string
 class Messages

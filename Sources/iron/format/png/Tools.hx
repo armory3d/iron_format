@@ -24,8 +24,8 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
  */
-package arm.format.png;
-import arm.format.png.Data;
+package iron.format.png;
+import iron.format.png.Data;
 
 class Tools {
 
@@ -53,7 +53,7 @@ class Tools {
 		return null;
 	}
 
-	static inline function filter( data : #if flash10 arm.format.tools.MemoryBytes #else haxe.io.Bytes #end, x, y, stride, prev, p, numChannels=4 ) {
+	static inline function filter( data : #if flash10 iron.format.tools.MemoryBytes #else haxe.io.Bytes #end, x, y, stride, prev, p, numChannels=4 ) {
 		var b = y == 0 ? 0 : data.get(p - stride);
 		var c = x == 0 || y == 0  ? 0 : data.get(p - stride - numChannels);
 		var k = prev + b - c;
@@ -127,7 +127,7 @@ class Tools {
 			data = fullData.getBytes();
 		if( data == null )
 			throw "Data not found";
-		data = arm.format.tools.Inflate.run(data);
+		data = iron.format.tools.Inflate.run(data);
 		var r = 0, w = 0;
 		switch( h.color ) {
 		default:
@@ -146,8 +146,8 @@ class Tools {
 			if( bytes.length < 1024 ) bytes.length = 1024;
 			flash.Memory.select(bytes);
 			var realData = data, realGrey = grey;
-			var data = arm.format.tools.MemoryBytes.make(0);
-			var grey = arm.format.tools.MemoryBytes.make(start);
+			var data = iron.format.tools.MemoryBytes.make(0);
+			var grey = iron.format.tools.MemoryBytes.make(start);
 			#end
 
 			var rinc = (alpha ? 2 : 1);
@@ -226,7 +226,7 @@ class Tools {
 			data = fullData.getBytes();
 		if( data == null )
 			throw "Data not found";
-		data = arm.format.tools.Inflate.run(data);
+		data = iron.format.tools.Inflate.run(data);
 		var r = 0, w = 0;
 		var lineDelta = 0;
 		if( flipY ) {
@@ -267,8 +267,8 @@ class Tools {
 			if( bytes.length < 1024 ) bytes.length = 1024;
 			flash.Memory.select(bytes);
 			var realData = data, realRgba = bgra;
-			var data = arm.format.tools.MemoryBytes.make(0);
-			var bgra = arm.format.tools.MemoryBytes.make(start);
+			var data = iron.format.tools.MemoryBytes.make(0);
+			var bgra = iron.format.tools.MemoryBytes.make(start);
 			#end
 
 			var rline = (h.width * h.colbits) >> 3;
@@ -382,8 +382,8 @@ class Tools {
 			if( bytes.length < 1024 ) bytes.length = 1024;
 			flash.Memory.select(bytes);
 			var realData = data, realRgba = bgra;
-			var data = arm.format.tools.MemoryBytes.make(0);
-			var bgra = arm.format.tools.MemoryBytes.make(start);
+			var data = iron.format.tools.MemoryBytes.make(0);
+			var bgra = iron.format.tools.MemoryBytes.make(start);
 			#end
 
 			for( y in 0...h.height ) {
@@ -509,8 +509,8 @@ class Tools {
 			if( bytes.length < 1024 ) bytes.length = 1024;
 			flash.Memory.select(bytes);
 			var realData = data, realRgba = bgra;
-			var data = arm.format.tools.MemoryBytes.make(0);
-			var bgra = arm.format.tools.MemoryBytes.make(start);
+			var data = iron.format.tools.MemoryBytes.make(0);
+			var bgra = iron.format.tools.MemoryBytes.make(start);
 			#end
 
 			// transparent palette extension
@@ -660,7 +660,7 @@ class Tools {
 		}
 		var l = new List();
 		l.add(CHeader({ width : width, height : height, colbits : 8, color : ColGrey(false), interlaced : false }));
-		l.add(CData(arm.format.tools.Deflate.run(rgb,level)));
+		l.add(CData(iron.format.tools.Deflate.run(rgb,level)));
 		l.add(CEnd);
 		return l;
 	}
@@ -683,7 +683,7 @@ class Tools {
 		}
 		var l = new List();
 		l.add(CHeader({ width : width, height : height, colbits : 8, color : ColTrue(false), interlaced : false }));
-		l.add(CData(arm.format.tools.Deflate.run(rgb,level)));
+		l.add(CData(iron.format.tools.Deflate.run(rgb,level)));
 		l.add(CEnd);
 		return l;
 	}
@@ -707,7 +707,7 @@ class Tools {
 		}
 		var l = new List();
 		l.add(CHeader({ width : width, height : height, colbits : 8, color : ColTrue(true), interlaced : false }));
-		l.add(CData(arm.format.tools.Deflate.run(rgba,level)));
+		l.add(CData(iron.format.tools.Deflate.run(rgba,level)));
 		l.add(CEnd);
 		return l;
 	}
@@ -731,7 +731,7 @@ class Tools {
 		}
 		var l = new List();
 		l.add(CHeader({ width : width, height : height, colbits : 8, color : ColTrue(true), interlaced : false }));
-		l.add(CData(arm.format.tools.Deflate.run(rgba,level)));
+		l.add(CData(iron.format.tools.Deflate.run(rgba,level)));
 		l.add(CEnd);
 		return l;
 	}

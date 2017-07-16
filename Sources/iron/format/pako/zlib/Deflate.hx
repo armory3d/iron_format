@@ -1,15 +1,15 @@
-package arm.pako.zlib;
+package iron.format.pako.zlib;
 
 import haxe.Constraints.Function;
 import haxe.ds.Vector;
 import haxe.io.UInt16Array;
 import haxe.io.UInt8Array;
-import arm.pako.utils.Common;
-import arm.pako.zlib.Constants;
-import arm.pako.zlib.Trees;
-import arm.pako.zlib.Adler32;
-import arm.pako.zlib.CRC32;
-import arm.pako.zlib.Messages;
+import iron.format.pako.utils.Common;
+import iron.format.pako.zlib.Constants;
+import iron.format.pako.zlib.Trees;
+import iron.format.pako.zlib.Adler32;
+import iron.format.pako.zlib.CRC32;
+import iron.format.pako.zlib.Messages;
 
 /* Public constants ==========================================================*/
 /* ===========================================================================*/
@@ -1656,9 +1656,9 @@ class Deflate
 }
 
 
-@:allow(arm.pako.zlib.Trees)
-@:allow(arm.pako.zlib.Deflate)
-@:access(arm.pako.zlib.Deflate)
+@:allow(iron.format.pako.zlib.Trees)
+@:allow(iron.format.pako.zlib.Deflate)
+@:access(iron.format.pako.zlib.Deflate)
 class DeflateState
 {
   var strm:ZStream = null;            /* pointer back to this zlib stream */
@@ -1856,7 +1856,7 @@ class DeflateState
  * exclude worst case performance for pathological files. Better values may be
  * found for specific files.
  */
-@:allow(arm.pako.zlib.Deflate)
+@:allow(iron.format.pako.zlib.Deflate)
 class Config 
 {
   var good_length:Int;
