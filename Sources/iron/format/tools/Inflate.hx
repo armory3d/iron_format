@@ -28,30 +28,12 @@ package iron.format.tools;
 
 class Inflate {
 
-	public static function run( bytes : haxe.io.Bytes ) {
-		// #if (haxe_ver >= 3.2)
+	public static function run(bytes:haxe.io.Bytes) {
+
+		// var input = haxe.io.UInt8Array.fromBytes(bytes);
+		// var output = iron.format.pako.Pako.inflate(input);
+		// return output.view.buffer;
 
 		return haxe.zip.Uncompress.run(bytes);
-
-		// #else
-
-		// // legacy support
-		// #if neko
-		// return neko.zip.Uncompress.run(bytes);
-		// #elseif cpp
-		// return cpp.zip.Uncompress.run(bytes);
-		// #elseif flash9
-		// var b = new flash.utils.ByteArray();
-		// b.writeBytes(bytes.getData(),0,bytes.length);
-		// b.uncompress();
-		// return haxe.io.Bytes.ofData(b);
-		// #elseif php
-		// return haxe.zip.Uncompress.run(bytes);
-		// #else
-		// return InflateImpl.run(new haxe.io.BytesInput(bytes));
-		// #end
-
-		// #end
 	}
-
 }

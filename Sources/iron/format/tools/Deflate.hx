@@ -28,34 +28,11 @@ package iron.format.tools;
 
 class Deflate {
 
-	public static function run( b : haxe.io.Bytes, ?level = 9 ) : haxe.io.Bytes {
-		// #if (haxe_ver >= 3.2)
-
+	public static function run(b:haxe.io.Bytes, ?level = 9):haxe.io.Bytes {
 		// return haxe.zip.Compress.run(b,level);
 		
 		var input = haxe.io.UInt8Array.fromBytes(b);
 		var output = iron.format.pako.Pako.deflate(input);
 		return output.view.buffer;
-
-		// #else
-		// // legacy
-		// #if neko
-		// return neko.zip.Compress.run(b,level);
-		// #elseif flash9
-		// var bytes = b.sub(0,b.length);
-		// var data = bytes.getData();
-		// data.compress();
-		// return haxe.io.Bytes.ofData(data);
-		// #elseif cpp
-		// return cpp.zip.Compress.run(b,level);
-		// #elseif ( java || php )
-		// return haxe.zip.Compress.run(b,level);
-		// #else
-		// throw "Deflate is not supported on this platform";
-		// return null;
-		// #end
-
-		// #end
 	}
-
 }

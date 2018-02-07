@@ -680,25 +680,26 @@ class Geometry {
 		return uvs;
 	}
 
-	public function getBuffers(positions:Array<Float>, normals:Array<Float>, uvs:Array<Float>, indices:Array<Int>) {
-		var ind = getIndexes();
+	public function getBuffers(positions:Array<Float>, normals:Array<Float>, uvs:Array<Float>, indices:Array<Int>, binary:Bool) {
 		var va = getVertices();
 		var na = getNormals();
 		var uva = getUVs()[0];
-		// triangulize indexes : format is  A,B,...,-X : negative values mark the end of the polygon
+		// triangulize indexes :
+		// format is  A,B,...,-X : negative values mark the end of the polygon
 		var count = 0, pos = 0;
 		var index = getPolygons();
+		var magic = binary ? 0 : 1; // ...
 		for( i in index ) {
 			count++;
 			if( i < 0 ) {
-				index[pos] = -i - 1;
+				index[pos] = -i - magic;
 				var start = pos - count + 1;
 				for( n in 0...count ) {
 					var k = n + start;
 					var vidx = index[k];
-					positions.push(-va[vidx * 3]);
-					positions.push(va[vidx * 3 + 1]);
-					positions.push(va[vidx * 3 + 2]);
+					positions.push(-va[vidx * 3] * 0.01);
+					positions.push(va[vidx * 3 + 1] * 0.01);
+					positions.push(va[vidx * 3 + 2] * 0.01);
 					normals.push(-na[k * 3]);
 					normals.push(na[k * 3 + 1]);
 					normals.push(na[k * 3 + 2]);
