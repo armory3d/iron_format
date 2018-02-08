@@ -52,6 +52,7 @@ class Loader {
 				var sec1:Array<String> = words[1].split("/");
 				var sec2:Array<String> = words[2].split("/");
 				var sec3:Array<String> = words[3].split("/");
+				var sec4:Array<String> = words.length > 4 ? words[4].split("/") : null;
 
 				var vi0 = Std.int(Std.parseFloat(sec1[0]));
 				var vi1 = Std.int(Std.parseFloat(sec2[0]));
@@ -59,41 +60,41 @@ class Loader {
 				vertexIndices.push(vi0);
 				vertexIndices.push(vi1);
 				vertexIndices.push(vi2);
-
-				var vuv0 = Std.int(Std.parseFloat(sec1[1]));
-				var vuv1 = Std.int(Std.parseFloat(sec2[1]));
-				var vuv2 = Std.int(Std.parseFloat(sec3[1]));
-				uvIndices.push(vuv0);
-				uvIndices.push(vuv1);
-				uvIndices.push(vuv2);
-				
-				var vn0 = Std.int(Std.parseFloat(sec1[2]));
-				var vn1 = Std.int(Std.parseFloat(sec2[2]));
-				var vn2 = Std.int(Std.parseFloat(sec3[2]));
-				normalIndices.push(vn0);
-				normalIndices.push(vn1);
-				normalIndices.push(vn2);
-
 				if (words.length > 4) {
-					var sec4:Array<String> = words[4].split("/");
-
 					vertexIndices.push(vi2);
 					vertexIndices.push(Std.int(Std.parseFloat(sec4[0])));
 					vertexIndices.push(vi0);
+				}
 
-					uvIndices.push(vuv2);
-					uvIndices.push(Std.int(Std.parseFloat(sec4[1])));
+				if (tempUVs.length > 0) {
+					var vuv0 = Std.int(Std.parseFloat(sec1[1]));
+					var vuv1 = Std.int(Std.parseFloat(sec2[1]));
+					var vuv2 = Std.int(Std.parseFloat(sec3[1]));
 					uvIndices.push(vuv0);
-
-					normalIndices.push(vn2);
-					normalIndices.push(Std.int(Std.parseFloat(sec4[2])));
+					uvIndices.push(vuv1);
+					uvIndices.push(vuv2);
+					if (words.length > 4) {
+						uvIndices.push(vuv2);
+						uvIndices.push(Std.int(Std.parseFloat(sec4[1])));
+						uvIndices.push(vuv0);
+					}
+				}
+				
+				if (tempNormals.length > 0) {
+					var vn0 = Std.int(Std.parseFloat(sec1[2]));
+					var vn1 = Std.int(Std.parseFloat(sec2[2]));
+					var vn2 = Std.int(Std.parseFloat(sec3[2]));
 					normalIndices.push(vn0);
+					normalIndices.push(vn1);
+					normalIndices.push(vn2);
+					if (words.length > 4) {
+						normalIndices.push(vn2);
+						normalIndices.push(Std.int(Std.parseFloat(sec4[2])));
+						normalIndices.push(vn0);
+					}
 				}
 			}
 		}
-
-		// UVs not found
-		if (tempUVs.length == 0) return;
 
 		positions = [];
 		uvs = [];
@@ -102,14 +103,45 @@ class Loader {
 
 		for (i in 0...vertexIndices.length) {
 			positions.push(tempPositions[(vertexIndices[i] - 1) * 3]);
+			positions.push(-tempPositions[(vertexIndices[i] - 1) * 3 + 2]);
 			positions.push(tempPositions[(vertexIndices[i] - 1) * 3 + 1]);
-			positions.push(tempPositions[(vertexIndices[i] - 1) * 3 + 2]);
-			uvs.push(tempUVs[(uvIndices[i] - 1) * 2]);
-			uvs.push(1.0 - tempUVs[(uvIndices[i] - 1) * 2 + 1]);
-			normals.push(tempNormals[(normalIndices[i] - 1) * 3]);
-			normals.push(tempNormals[(normalIndices[i] - 1) * 3 + 1]);
-			normals.push(tempNormals[(normalIndices[i] - 1) * 3 + 2]);
+			
 			indices.push(i);
+		}
+		if (uvIndices.length > 0) {
+			for (i in 0...vertexIndices.length) {
+				uvs.push(tempUVs[(uvIndices[i] - 1) * 2]);
+				uvs.push(1.0 - tempUVs[(uvIndices[i] - 1) * 2 + 1]);
+			}
+		}
+		if (normalIndices.length > 0) {
+			for (i in 0...vertexIndices.length) {
+				normals.push(tempNormals[(normalIndices[i] - 1) * 3]);
+				normals.push(-tempNormals[(normalIndices[i] - 1) * 3 + 2]);
+				normals.push(tempNormals[(normalIndices[i] - 1) * 3 + 1]);
+				
+			}
+		}
+		else {
+			// Calc normals
+			var va = new iron.math.Vec4();
+			var vb = new iron.math.Vec4();
+			var vc = new iron.math.Vec4();
+			var cb = new iron.math.Vec4();
+			var ab = new iron.math.Vec4();
+			for (i in 0...Std.int(vertexIndices.length / 3)) {
+				va.set(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
+				vb.set(positions[(i + 1) * 3], positions[(i + 1) * 3 + 1], positions[(i + 1) * 3 + 2]);
+				vc.set(positions[(i + 2) * 3], positions[(i + 2) * 3 + 1], positions[(i + 2) * 3 + 2]);
+				cb.subvecs(vc, vb);
+				ab.subvecs(va, vb);
+				cb.cross(ab);
+				cb.normalize();
+				cb = ab;
+				normals.push(cb.x); normals.push(cb.y); normals.push(cb.z);
+				normals.push(cb.x); normals.push(cb.y); normals.push(cb.z);
+				normals.push(cb.x); normals.push(cb.y); normals.push(cb.z);
+			}
 		}
 	}
 }
