@@ -1,11 +1,13 @@
 package iron.format.obj;
 
-class Loader {
+import iron.data.SceneFormat;
 
-	public var positions:Array<Float> = null;
-	public var uvs:Array<Float> = null;
-	public var normals:Array<Float> = null;
-	public var indices:Array<Int>;
+class ObjParser {
+
+	public var posa:TFloat32Array = null;
+	public var nora:TFloat32Array = null;
+	public var texa:TFloat32Array = null;
+	public var inda:TUint32Array = null;
 
 	public function new(blob:kha.Blob) {
 
@@ -96,30 +98,21 @@ class Loader {
 			}
 		}
 
-		positions = [];
-		uvs = [];
-		normals = [];
-		indices = [];
-
+		posa = new TFloat32Array(vertexIndices.length * 3);
+		inda = new TUint32Array(vertexIndices.length);
 		for (i in 0...vertexIndices.length) {
-			positions.push(tempPositions[(vertexIndices[i] - 1) * 3]);
-			positions.push(-tempPositions[(vertexIndices[i] - 1) * 3 + 2]);
-			positions.push(tempPositions[(vertexIndices[i] - 1) * 3 + 1]);
-			
-			indices.push(i);
+			posa[i * 3] = tempPositions[(vertexIndices[i] - 1) * 3];
+			posa[i * 3 + 1] = -tempPositions[(vertexIndices[i] - 1) * 3 + 2];
+			posa[i * 3 + 2] = tempPositions[(vertexIndices[i] - 1) * 3 + 1];
+			inda[i] = i;
 		}
-		if (uvIndices.length > 0) {
-			for (i in 0...vertexIndices.length) {
-				uvs.push(tempUVs[(uvIndices[i] - 1) * 2]);
-				uvs.push(1.0 - tempUVs[(uvIndices[i] - 1) * 2 + 1]);
-			}
-		}
+
+		nora = new TFloat32Array(normalIndices.length * 3);
 		if (normalIndices.length > 0) {
 			for (i in 0...vertexIndices.length) {
-				normals.push(tempNormals[(normalIndices[i] - 1) * 3]);
-				normals.push(-tempNormals[(normalIndices[i] - 1) * 3 + 2]);
-				normals.push(tempNormals[(normalIndices[i] - 1) * 3 + 1]);
-				
+				nora[i * 3] = tempNormals[(normalIndices[i] - 1) * 3];
+				nora[i * 3 + 1] = -tempNormals[(normalIndices[i] - 1) * 3 + 2];
+				nora[i * 3 + 2] = tempNormals[(normalIndices[i] - 1) * 3 + 1];
 			}
 		}
 		else {
@@ -130,17 +123,25 @@ class Loader {
 			var cb = new iron.math.Vec4();
 			var ab = new iron.math.Vec4();
 			for (i in 0...Std.int(vertexIndices.length / 3)) {
-				va.set(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
-				vb.set(positions[(i + 1) * 3], positions[(i + 1) * 3 + 1], positions[(i + 1) * 3 + 2]);
-				vc.set(positions[(i + 2) * 3], positions[(i + 2) * 3 + 1], positions[(i + 2) * 3 + 2]);
+				va.set(posa[i * 3], posa[i * 3 + 1], posa[i * 3 + 2]);
+				vb.set(posa[(i + 1) * 3], posa[(i + 1) * 3 + 1], posa[(i + 1) * 3 + 2]);
+				vc.set(posa[(i + 2) * 3], posa[(i + 2) * 3 + 1], posa[(i + 2) * 3 + 2]);
 				cb.subvecs(vc, vb);
 				ab.subvecs(va, vb);
 				cb.cross(ab);
 				cb.normalize();
 				cb = ab;
-				normals.push(cb.x); normals.push(cb.y); normals.push(cb.z);
-				normals.push(cb.x); normals.push(cb.y); normals.push(cb.z);
-				normals.push(cb.x); normals.push(cb.y); normals.push(cb.z);
+				nora[i * 9 + 0] = cb.x; nora[i * 9 + 1] = cb.y; nora[i * 9 + 2] = cb.z;
+				nora[i * 9 + 3] = cb.x; nora[i * 9 + 4] = cb.y; nora[i * 9 + 5] = cb.z;
+				nora[i * 9 + 6] = cb.x; nora[i * 9 + 7] = cb.y; nora[i * 9 + 8] = cb.z;
+			}
+		}
+
+		if (uvIndices.length > 0) {
+			texa = new TFloat32Array(uvIndices.length * 2);
+			for (i in 0...vertexIndices.length) {
+				texa[i * 2] = tempUVs[(uvIndices[i] - 1) * 2];
+				texa[i * 2 + 1] = 1.0 - tempUVs[(uvIndices[i] - 1) * 2 + 1];
 			}
 		}
 	}
