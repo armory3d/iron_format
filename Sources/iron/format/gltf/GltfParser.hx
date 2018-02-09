@@ -1,11 +1,13 @@
 package iron.format.gltf;
 
-class Loader {
+import iron.data.SceneFormat;
 
-	public var positions:Array<Float> = null;
-	public var uvs:Array<Float> = null;
-	public var normals:Array<Float> = null;
-	public var indices:Array<Int> = null;
+class GltfParser {
+
+	public var posa:TFloat32Array = null;
+	public var nora:TFloat32Array = null;
+	public var texa:TFloat32Array = null;
+	public var inda:TUint32Array = null;
 
 	public function new(blob:kha.Blob) {
 		// Prototype only, will collapse on anything more complex
@@ -28,55 +30,67 @@ class Loader {
 		if (bytes == null) return;
 		var b = kha.Blob.fromBytes(bytes);
 
-		indices = [];
-		positions = [];
-		normals = [];
-		uvs = [];
 		var elemSize = v.byteLength / a.count;
 		switch (elemSize) {
-		case 1: readU8Array(format, b, a, indices);
-		case 2: readU16Array(format, b, a, indices);
-		default: readU32Array(format, b, a, indices);
+		case 1: inda = readU8Array(format, b, a);
+		case 2: inda = readU16Array(format, b, a);
+		default: inda = readU32Array(format, b, a);
 		}
-		readF32Array(format, b, format.accessors[prim.attributes.POSITION], positions);
-		readF32Array(format, b, format.accessors[prim.attributes.NORMAL], normals);
-		readF32Array(format, b, format.accessors[prim.attributes.TEXCOORD_0], uvs);
+		posa = readF32Array(format, b, format.accessors[prim.attributes.POSITION]);
+		nora = readF32Array(format, b, format.accessors[prim.attributes.NORMAL]);
+		if (prim.attributes.TEXCOORD_0 != null) texa = readF32Array(format, b, format.accessors[prim.attributes.TEXCOORD_0]);
 	}
 
-	function readU8Array(format:TGLTF, b:kha.Blob, a:TAccessor, ar:Array<Int>) {
+	function readU8Array(format:TGLTF, b:kha.Blob, a:TAccessor):TUint32Array {
 		var v = format.bufferViews[a.bufferView];
+		var ar = new TUint32Array(v.byteLength);
 		var pos = v.byteOffset;
+		var i = 0;
 		while (pos < v.byteOffset + v.byteLength) {
-			ar.push(b.readU8(pos));
+			ar[i] = b.readU8(pos);
 			pos += 1;
+			i++;
 		}
+		return ar;
 	}
 
-	function readU16Array(format:TGLTF, b:kha.Blob, a:TAccessor, ar:Array<Int>) {
+	function readU16Array(format:TGLTF, b:kha.Blob, a:TAccessor):TUint32Array {
 		var v = format.bufferViews[a.bufferView];
+		var ar = new TUint32Array(Std.int(v.byteLength / 2));
 		var pos = v.byteOffset;
+		var i = 0;
 		while (pos < v.byteOffset + v.byteLength) {
-			ar.push(b.readU16LE(pos));
+			ar[i] = b.readU16LE(pos);
 			pos += 2;
+			i++;
 		}
+		return ar;
 	}
 
-	function readU32Array(format:TGLTF, b:kha.Blob, a:TAccessor, ar:Array<Int>) {
+	function readU32Array(format:TGLTF, b:kha.Blob, a:TAccessor):TUint32Array {
 		var v = format.bufferViews[a.bufferView];
+		var ar = new TUint32Array(Std.int(v.byteLength / 4));
 		var pos = v.byteOffset;
+		var i = 0;
 		while (pos < v.byteOffset + v.byteLength) {
-			ar.push(b.readU32LE(pos));
+			ar[i] = b.readU32LE(pos);
 			pos += 4;
+			i++;
 		}
+		return ar;
 	}
 
-	function readF32Array(format:TGLTF, b:kha.Blob, a:TAccessor, ar:Array<Float>) {
+	function readF32Array(format:TGLTF, b:kha.Blob, a:TAccessor):TFloat32Array {
 		var v = format.bufferViews[a.bufferView];
+		var ar = new TFloat32Array(Std.int(v.byteLength / 4));
 		var pos = v.byteOffset;
+		var i = 0;
 		while (pos < v.byteOffset + v.byteLength) {
-			ar.push(b.readF32LE(pos));
+			ar[i] = b.readF32LE(pos);
 			pos += 4;
+			i++;
 		}
+		return ar;
 	}
 }
 

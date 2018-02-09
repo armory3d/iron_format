@@ -1,13 +1,14 @@
 package iron.format.fbx;
 
 import iron.format.fbx.Library;
+import iron.data.SceneFormat;
 
-class Loader {
+class FbxParser {
 
-	public var positions:Array<Float> = null;
-	public var normals:Array<Float> = null;
-	public var uvs:Array<Float> = null;
-	public var indices:Array<Int>;
+	public var posa:TFloat32Array = null;
+	public var nora:TFloat32Array = null;
+	public var texa:TFloat32Array = null;
+	public var inda:TUint32Array = null;
 
 	public function new(blob:kha.Blob) {
 		var magic = "Kaydara FBX Binary\x20\x20\x00\x1a\x00";
@@ -20,10 +21,10 @@ class Loader {
 		lib.load(fbx);
 
 		var g = lib.getFirstGeometry();
-		indices = [];
-		positions = [];
-		normals = [];
-		uvs = [];
-		g.getBuffers(positions, normals, uvs, indices, bin);
+		var res = g.getBuffers(bin);
+		posa = res.posa;
+		nora = res.nora;
+		texa = res.texa;
+		inda = res.inda;
 	}
 }

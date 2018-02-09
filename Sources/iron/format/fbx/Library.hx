@@ -680,43 +680,65 @@ class Geometry {
 		return uvs;
 	}
 
-	public function getBuffers(positions:Array<Float>, normals:Array<Float>, uvs:Array<Float>, indices:Array<Int>, binary:Bool) {
-		var va = getVertices();
-		var na = getNormals();
-		var uva = getUVs()[0];
+	public function getBuffers(binary:Bool) {
 		// triangulize indexes :
 		// format is  A,B,...,-X : negative values mark the end of the polygon
+		var pbuf = getVertices();
+		var nbuf = getNormals();
+		var tbuf = getUVs()[0];
 		var count = 0, pos = 0;
-		var index = getPolygons();
+		var polys = getPolygons();
 		var magic = binary ? 0 : 1; // ...
-		for( i in index ) {
+
+		var vlen = 0;
+		var ilen = 0;
+		for (i in polys) {
+			count++;
+			if (i < 0) {
+				for( n in 0...count ) vlen++;
+				for( n in 0...count - 2 ) ilen += 3;
+			}
+		}
+
+		var posa = new iron.data.SceneFormat.TFloat32Array(vlen * 3);
+		var nora = new iron.data.SceneFormat.TFloat32Array(vlen * 3);
+		var texa = new iron.data.SceneFormat.TFloat32Array(vlen * 2);
+		var inda = new iron.data.SceneFormat.TUint32Array(ilen);
+
+		count = 0;
+		vlen = 0;
+		ilen = 0;
+		for( i in polys ) {
 			count++;
 			if( i < 0 ) {
-				index[pos] = -i - magic;
+				polys[pos] = -i - magic;
 				var start = pos - count + 1;
 				for( n in 0...count ) {
 					var k = n + start;
-					var vidx = index[k];
-					positions.push(-va[vidx * 3] * 0.01);
-					positions.push(va[vidx * 3 + 1] * 0.01);
-					positions.push(va[vidx * 3 + 2] * 0.01);
-					normals.push(-na[k * 3]);
-					normals.push(na[k * 3 + 1]);
-					normals.push(na[k * 3 + 2]);
-					var iuv = uva.index[k];
-					uvs.push(uva.values[iuv * 2]);
-					uvs.push(uva.values[iuv * 2 + 1]);
+					var vidx = polys[k];
+					posa[vlen * 3    ] =-pbuf[vidx * 3] * 0.01;
+					posa[vlen * 3 + 1] = pbuf[vidx * 3 + 1] * 0.01;
+					posa[vlen * 3 + 2] = pbuf[vidx * 3 + 2] * 0.01;
+					nora[vlen * 3    ] =-nbuf[k * 3];
+					nora[vlen * 3 + 1] = nbuf[k * 3 + 1];
+					nora[vlen * 3 + 2] = nbuf[k * 3 + 2];
+					var iuv = tbuf.index[k];
+					texa[vlen * 2    ] = tbuf.values[iuv * 2];
+					texa[vlen * 2 + 1] = tbuf.values[iuv * 2 + 1];
+					vlen++;
 				}
 				// polygons are actually triangle fans
 				for( n in 0...count - 2 ) {
-					indices.push(start + n);
-					indices.push(start + count - 1);
-					indices.push(start + n + 1);
+					inda[ilen    ] = start + n;
+					inda[ilen + 1] = start + count - 1;
+					inda[ilen + 2] = start + n + 1;
+					ilen += 3;
 				}
-				index[pos] = i; // restore
+				polys[pos] = i; // restore
 				count = 0;
 			}
 			pos++;
 		}
+		return { posa: posa, nora: nora, texa: texa, inda: inda };
 	}
 }
