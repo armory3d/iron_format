@@ -133,8 +133,8 @@ typedef TPrimitive = {
 }
 
 typedef TAttributes = {
-	var POSITION:Int;
-	var NORMAL:Int;
-	var TANGENT:Int;
-	var TEXCOORD_0:Int;
+	var POSITION:Null<Int>;
+	var NORMAL:Null<Int>;
+	var TANGENT:Null<Int>;
+	var TEXCOORD_0:Null<Int>;
 }
