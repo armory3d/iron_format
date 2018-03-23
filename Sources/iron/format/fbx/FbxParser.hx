@@ -1,14 +1,13 @@
 package iron.format.fbx;
 
 import iron.format.fbx.Library;
-import iron.data.SceneFormat;
 
 class FbxParser {
 
-	public var posa:TFloat32Array = null;
-	public var nora:TFloat32Array = null;
-	public var texa:TFloat32Array = null;
-	public var inda:TUint32Array = null;
+	public var posa:kha.arrays.Float32Array = null;
+	public var nora:kha.arrays.Float32Array = null;
+	public var texa:kha.arrays.Float32Array = null;
+	public var inda:kha.arrays.Uint32Array = null;
 
 	public function new(blob:kha.Blob) {
 		var magic = "Kaydara FBX Binary\x20\x20\x00\x1a\x00";

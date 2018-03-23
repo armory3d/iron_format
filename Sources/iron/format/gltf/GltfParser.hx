@@ -1,13 +1,11 @@
 package iron.format.gltf;
 
-import iron.data.SceneFormat;
-
 class GltfParser {
 
-	public var posa:TFloat32Array = null;
-	public var nora:TFloat32Array = null;
-	public var texa:TFloat32Array = null;
-	public var inda:TUint32Array = null;
+	public var posa:kha.arrays.Float32Array = null;
+	public var nora:kha.arrays.Float32Array = null;
+	public var texa:kha.arrays.Float32Array = null;
+	public var inda:kha.arrays.Uint32Array = null;
 
 	public function new(blob:kha.Blob) {
 		// Prototype only, will collapse on anything more complex
@@ -41,9 +39,9 @@ class GltfParser {
 		if (prim.attributes.TEXCOORD_0 != null) texa = readF32Array(format, b, format.accessors[prim.attributes.TEXCOORD_0]);
 	}
 
-	function readU8Array(format:TGLTF, b:kha.Blob, a:TAccessor):TUint32Array {
+	function readU8Array(format:TGLTF, b:kha.Blob, a:TAccessor):kha.arrays.Uint32Array {
 		var v = format.bufferViews[a.bufferView];
-		var ar = new TUint32Array(v.byteLength);
+		var ar = new kha.arrays.Uint32Array(v.byteLength);
 		var pos = v.byteOffset;
 		var i = 0;
 		while (pos < v.byteOffset + v.byteLength) {
@@ -54,9 +52,9 @@ class GltfParser {
 		return ar;
 	}
 
-	function readU16Array(format:TGLTF, b:kha.Blob, a:TAccessor):TUint32Array {
+	function readU16Array(format:TGLTF, b:kha.Blob, a:TAccessor):kha.arrays.Uint32Array {
 		var v = format.bufferViews[a.bufferView];
-		var ar = new TUint32Array(Std.int(v.byteLength / 2));
+		var ar = new kha.arrays.Uint32Array(Std.int(v.byteLength / 2));
 		var pos = v.byteOffset;
 		var i = 0;
 		while (pos < v.byteOffset + v.byteLength) {
@@ -67,9 +65,9 @@ class GltfParser {
 		return ar;
 	}
 
-	function readU32Array(format:TGLTF, b:kha.Blob, a:TAccessor):TUint32Array {
+	function readU32Array(format:TGLTF, b:kha.Blob, a:TAccessor):kha.arrays.Uint32Array {
 		var v = format.bufferViews[a.bufferView];
-		var ar = new TUint32Array(Std.int(v.byteLength / 4));
+		var ar = new kha.arrays.Uint32Array(Std.int(v.byteLength / 4));
 		var pos = v.byteOffset;
 		var i = 0;
 		while (pos < v.byteOffset + v.byteLength) {
@@ -80,9 +78,9 @@ class GltfParser {
 		return ar;
 	}
 
-	function readF32Array(format:TGLTF, b:kha.Blob, a:TAccessor):TFloat32Array {
+	function readF32Array(format:TGLTF, b:kha.Blob, a:TAccessor):kha.arrays.Float32Array {
 		var v = format.bufferViews[a.bufferView];
-		var ar = new TFloat32Array(Std.int(v.byteLength / 4));
+		var ar = new kha.arrays.Float32Array(Std.int(v.byteLength / 4));
 		var pos = v.byteOffset;
 		var i = 0;
 		while (pos < v.byteOffset + v.byteLength) {

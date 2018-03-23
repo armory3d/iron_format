@@ -1,13 +1,11 @@
 package iron.format.obj;
 
-import iron.data.SceneFormat;
-
 class ObjParser {
 
-	public var posa:TFloat32Array = null;
-	public var nora:TFloat32Array = null;
-	public var texa:TFloat32Array = null;
-	public var inda:TUint32Array = null;
+	public var posa:kha.arrays.Float32Array = null;
+	public var nora:kha.arrays.Float32Array = null;
+	public var texa:kha.arrays.Float32Array = null;
+	public var inda:kha.arrays.Uint32Array = null;
 
 	public function new(blob:kha.Blob) {
 
@@ -98,8 +96,8 @@ class ObjParser {
 			}
 		}
 
-		posa = new TFloat32Array(vertexIndices.length * 3);
-		inda = new TUint32Array(vertexIndices.length);
+		posa = new kha.arrays.Float32Array(vertexIndices.length * 3);
+		inda = new kha.arrays.Uint32Array(vertexIndices.length);
 		for (i in 0...vertexIndices.length) {
 			posa[i * 3] = tempPositions[(vertexIndices[i] - 1) * 3];
 			posa[i * 3 + 1] = -tempPositions[(vertexIndices[i] - 1) * 3 + 2];
@@ -107,7 +105,7 @@ class ObjParser {
 			inda[i] = i;
 		}
 
-		nora = new TFloat32Array(normalIndices.length * 3);
+		nora = new kha.arrays.Float32Array(normalIndices.length * 3);
 		if (normalIndices.length > 0) {
 			for (i in 0...vertexIndices.length) {
 				nora[i * 3] = tempNormals[(normalIndices[i] - 1) * 3];
@@ -138,7 +136,7 @@ class ObjParser {
 		}
 
 		if (uvIndices.length > 0) {
-			texa = new TFloat32Array(uvIndices.length * 2);
+			texa = new kha.arrays.Float32Array(uvIndices.length * 2);
 			for (i in 0...vertexIndices.length) {
 				texa[i * 2] = tempUVs[(uvIndices[i] - 1) * 2];
 				texa[i * 2 + 1] = 1.0 - tempUVs[(uvIndices[i] - 1) * 2 + 1];

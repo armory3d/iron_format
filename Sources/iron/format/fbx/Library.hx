@@ -700,10 +700,10 @@ class Geometry {
 			}
 		}
 
-		var posa = new iron.data.SceneFormat.TFloat32Array(vlen * 3);
-		var nora = new iron.data.SceneFormat.TFloat32Array(vlen * 3);
-		var texa = new iron.data.SceneFormat.TFloat32Array(vlen * 2);
-		var inda = new iron.data.SceneFormat.TUint32Array(ilen);
+		var posa = new kha.arrays.Float32Array(vlen * 3);
+		var nora = new kha.arrays.Float32Array(vlen * 3);
+		var texa = new kha.arrays.Float32Array(vlen * 2);
+		var inda = new kha.arrays.Uint32Array(ilen);
 
 		count = 0;
 		vlen = 0;
