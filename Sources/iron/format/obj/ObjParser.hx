@@ -105,8 +105,8 @@ class ObjParser {
 			inda[i] = i;
 		}
 
-		nora = new kha.arrays.Float32Array(normalIndices.length * 3);
 		if (normalIndices.length > 0) {
+			nora = new kha.arrays.Float32Array(normalIndices.length * 3);
 			for (i in 0...vertexIndices.length) {
 				nora[i * 3] = tempNormals[(normalIndices[i] - 1) * 3];
 				nora[i * 3 + 1] = -tempNormals[(normalIndices[i] - 1) * 3 + 2];
@@ -115,6 +115,7 @@ class ObjParser {
 		}
 		else {
 			// Calc normals
+			nora = new kha.arrays.Float32Array(vertexIndices.length * 3);
 			var va = new iron.math.Vec4();
 			var vb = new iron.math.Vec4();
 			var vc = new iron.math.Vec4();
@@ -128,7 +129,6 @@ class ObjParser {
 				ab.subvecs(va, vb);
 				cb.cross(ab);
 				cb.normalize();
-				cb = ab;
 				nora[i * 9 + 0] = cb.x; nora[i * 9 + 1] = cb.y; nora[i * 9 + 2] = cb.z;
 				nora[i * 9 + 3] = cb.x; nora[i * 9 + 4] = cb.y; nora[i * 9 + 5] = cb.z;
 				nora[i * 9 + 6] = cb.x; nora[i * 9 + 7] = cb.y; nora[i * 9 + 8] = cb.z;
