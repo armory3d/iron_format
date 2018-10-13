@@ -115,23 +115,27 @@ class ObjParser {
 		}
 		else {
 			// Calc normals
-			nora = new kha.arrays.Float32Array(vertexIndices.length * 3);
+			nora = new kha.arrays.Float32Array(inda.length * 3);
 			var va = new iron.math.Vec4();
 			var vb = new iron.math.Vec4();
 			var vc = new iron.math.Vec4();
 			var cb = new iron.math.Vec4();
 			var ab = new iron.math.Vec4();
-			for (i in 0...Std.int(vertexIndices.length / 3)) {
-				va.set(posa[i * 3], posa[i * 3 + 1], posa[i * 3 + 2]);
-				vb.set(posa[(i + 1) * 3], posa[(i + 1) * 3 + 1], posa[(i + 1) * 3 + 2]);
-				vc.set(posa[(i + 2) * 3], posa[(i + 2) * 3 + 1], posa[(i + 2) * 3 + 2]);
+			for (i in 0...Std.int(inda.length / 3)) {
+				var i1 = inda[i * 3];
+				var i2 = inda[i * 3 + 1];
+				var i3 = inda[i * 3 + 2];
+				va.set(posa[i1 * 3], posa[i1 * 3 + 1], posa[i1 * 3 + 2]);
+				vb.set(posa[i2 * 3], posa[i2 * 3 + 1], posa[i2 * 3 + 2]);
+				vc.set(posa[i3 * 3], posa[i3 * 3 + 1], posa[i3 * 3 + 2]);
 				cb.subvecs(vc, vb);
 				ab.subvecs(va, vb);
 				cb.cross(ab);
 				cb.normalize();
-				nora[i * 9 + 0] = cb.x; nora[i * 9 + 1] = cb.y; nora[i * 9 + 2] = cb.z;
-				nora[i * 9 + 3] = cb.x; nora[i * 9 + 4] = cb.y; nora[i * 9 + 5] = cb.z;
-				nora[i * 9 + 6] = cb.x; nora[i * 9 + 7] = cb.y; nora[i * 9 + 8] = cb.z;
+
+				nora[i1 * 3] = cb.x; nora[i1 * 3 + 1] = cb.y; nora[i1 * 3 + 2] = cb.z;
+				nora[i2 * 3] = cb.x; nora[i2 * 3 + 1] = cb.y; nora[i2 * 3 + 2] = cb.z;
+				nora[i3 * 3] = cb.x; nora[i3 * 3 + 1] = cb.y; nora[i3 * 3 + 2] = cb.z;
 			}
 		}
 
