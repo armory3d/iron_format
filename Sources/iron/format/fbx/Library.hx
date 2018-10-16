@@ -501,12 +501,12 @@ class Library {
 						switch( pname ) {
 						case "UV" if( pval != "" ):
 							var xml = try Xml.parse(pval) catch( e : Dynamic ) throw "Invalid UV data in " + FbxTools.getName(m);
-							var frames = [for( f in new haxe.xml.Fast(xml.firstElement()).elements ) { var f = f.innerData.split(" ");  { t : Std.parseFloat(f[0]) * 9622116.25, u : Std.parseFloat(f[1]), v : Std.parseFloat(f[2]) }} ];
+							var frames = [for( f in new haxe.xml.Access(xml.firstElement()).elements ) { var f = f.innerData.split(" ");  { t : Std.parseFloat(f[0]) * 9622116.25, u : Std.parseFloat(f[1]), v : Std.parseFloat(f[2]) }} ];
 							if( uvAnims == null ) uvAnims = new Map();
 							uvAnims.set(FbxTools.getName(m), frames);
 						case "Events":
 							var xml = try Xml.parse(pval) catch( e : Dynamic ) throw "Invalid Events data in " + FbxTools.getName(m);
-							animationEvents = [for( f in new haxe.xml.Fast(xml.firstElement()).elements ) { var f = f.innerData.split(" ");  { frame : Std.parseInt(f.shift()), data : StringTools.trim(f.join(" ")) }} ];
+							animationEvents = [for( f in new haxe.xml.Access(xml.firstElement()).elements ) { var f = f.innerData.split(" ");  { frame : Std.parseInt(f.shift()), data : StringTools.trim(f.join(" ")) }} ];
 						default:
 						}
 					}
