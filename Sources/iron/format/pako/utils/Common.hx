@@ -14,11 +14,7 @@ class Common
   static inline public function zero(buf:ArrayBufferView) { 
     var start = buf.byteOffset;
     var len = buf.byteLength; 
-    #if kha_webgl
-    //// TODO: Pako throws Uint8Array is not a constructor in Trees.__init__
-    #else
     buf.buffer.fill(start, len, 0);
-    #end
   }
   
   //NOTE(hx): if ArrayBufferView.EMULATED it will be a copy

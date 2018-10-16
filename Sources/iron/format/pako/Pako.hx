@@ -48,7 +48,7 @@ class Pako
    * var pako = require('pako')
    *   , data = Uint8Array([1,2,3,4,5,6,7,8,9]);
    *
-   * console.log(iron.format.pako.deflate(data));
+   * console.log(pako.deflate(data));
    * ```
    **/
   static public function deflate(input:UInt8Array, ?options:DeflateOptions) {
@@ -123,11 +123,11 @@ class Pako
    *
    * ```javascript
    * var pako = require('pako')
-   *   , input = iron.format.pako.deflate([1,2,3,4,5,6,7,8,9])
+   *   , input = pako.deflate([1,2,3,4,5,6,7,8,9])
    *   , output;
    *
    * try {
-   *   output = iron.format.pako.inflate(input);
+   *   output = pako.inflate(input);
    * } catch (err)
    *   console.log(err);
    * }
