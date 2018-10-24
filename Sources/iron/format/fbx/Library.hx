@@ -686,10 +686,10 @@ class Geometry {
 		var pbuf = getVertices();
 		var nbuf = getNormals();
 		var tbuf = getUVs()[0];
-		var count = 0, pos = 0;
 		var polys = getPolygons();
 		var magic = binary ? 0 : 1; // ...
 
+		var count = 0;
 		var vlen = 0;
 		var ilen = 0;
 		for (i in polys) {
@@ -702,9 +702,10 @@ class Geometry {
 
 		var posa = new kha.arrays.Float32Array(vlen * 3);
 		var nora = new kha.arrays.Float32Array(vlen * 3);
-		var texa = new kha.arrays.Float32Array(vlen * 2);
+		var texa = tbuf != null ? new kha.arrays.Float32Array(vlen * 2) : null;
 		var inda = new kha.arrays.Uint32Array(ilen);
 
+		var pos = 0;
 		count = 0;
 		vlen = 0;
 		ilen = 0;
@@ -716,22 +717,24 @@ class Geometry {
 				for( n in 0...count ) {
 					var k = n + start;
 					var vidx = polys[k];
-					posa[vlen * 3    ] =-pbuf[vidx * 3] * 0.01;
+					posa[vlen * 3    ] = pbuf[vidx * 3    ] * 0.01;
 					posa[vlen * 3 + 1] = pbuf[vidx * 3 + 1] * 0.01;
 					posa[vlen * 3 + 2] = pbuf[vidx * 3 + 2] * 0.01;
-					nora[vlen * 3    ] =-nbuf[k * 3];
+					nora[vlen * 3    ] = nbuf[k * 3    ];
 					nora[vlen * 3 + 1] = nbuf[k * 3 + 1];
 					nora[vlen * 3 + 2] = nbuf[k * 3 + 2];
-					var iuv = tbuf.index[k];
-					texa[vlen * 2    ] = tbuf.values[iuv * 2];
-					texa[vlen * 2 + 1] = tbuf.values[iuv * 2 + 1];
+					if (tbuf != null) {
+						var iuv = tbuf.index[k];
+						texa[vlen * 2    ] =       tbuf.values[iuv * 2    ];
+						texa[vlen * 2 + 1] = 1.0 - tbuf.values[iuv * 2 + 1];
+					}
 					vlen++;
 				}
 				// polygons are actually triangle fans
 				for( n in 0...count - 2 ) {
-					inda[ilen    ] = start + n;
+					inda[ilen + 2] = start + n;
 					inda[ilen + 1] = start + count - 1;
-					inda[ilen + 2] = start + n + 1;
+					inda[ilen    ] = start + n + 1;
 					ilen += 3;
 				}
 				polys[pos] = i; // restore
@@ -739,6 +742,7 @@ class Geometry {
 			}
 			pos++;
 		}
+
 		return { posa: posa, nora: nora, texa: texa, inda: inda };
 	}
 }
