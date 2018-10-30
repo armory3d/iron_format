@@ -8,6 +8,7 @@ class FbxParser {
 	public var nora:kha.arrays.Float32Array = null;
 	public var texa:kha.arrays.Float32Array = null;
 	public var inda:kha.arrays.Uint32Array = null;
+	public var name = "";
 
 	public function new(blob:kha.Blob) {
 		var magic = "Kaydara FBX Binary\x20\x20\x00\x1a\x00";

@@ -6,6 +6,7 @@ class GltfParser {
 	public var nora:kha.arrays.Float32Array = null;
 	public var texa:kha.arrays.Float32Array = null;
 	public var inda:kha.arrays.Uint32Array = null;
+	public var name = "";
 
 	public function new(blob:kha.Blob) {
 		// Prototype only, will collapse on anything more complex

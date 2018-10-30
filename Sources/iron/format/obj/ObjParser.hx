@@ -6,8 +6,18 @@ class ObjParser {
 	public var nora:kha.arrays.Float32Array = null;
 	public var texa:kha.arrays.Float32Array = null;
 	public var inda:kha.arrays.Uint32Array = null;
+	public var name = "";
 
-	public function new(blob:kha.Blob) {
+	public var hasNext = false; // File contains multiple objects
+	public var pos = 0;
+	
+	static var lastName = "";
+	static var vindOff = 0;
+	static var tindOff = 0;
+	static var nindOff = 0;
+
+	public function new(blob:kha.Blob, startPos = 0) {
+		pos = startPos;
 
 		var vertexIndices:Array<Int> = [];
 		var uvIndices:Array<Int> = [];
@@ -17,7 +27,8 @@ class ObjParser {
 		var tempUVs:Array<Float> = [];
 		var tempNormals:Array<Float> = [];
 
-		var pos = 0;
+		name = lastName;
+
 		while (true) {
 
 			if (pos >= blob.length) break;
@@ -94,7 +105,30 @@ class ObjParser {
 					}
 				}
 			}
+			else if (words[0] == "o") {
+				if (words.length > 1) {
+					lastName = words[1];
+					if (name == "") name = lastName;
+				}
+				if (startPos > 0 || hasNext) { // Pass through the first "o"
+					hasNext = true;
+					break;
+				}
+				hasNext = true;
+			}
 		}
+
+		if (startPos > 0) {
+			for (i in 0...vertexIndices.length) vertexIndices[i] -= vindOff;
+			for (i in 0...uvIndices.length) uvIndices[i] -= tindOff;
+			for (i in 0...normalIndices.length) normalIndices[i] -= nindOff;
+		}
+		else {
+			vindOff = tindOff = nindOff = 0;
+		}
+		vindOff += Std.int(tempPositions.length / 3);
+		tindOff += Std.int(tempUVs.length / 2);
+		nindOff += Std.int(tempNormals.length / 3);
 
 		posa = new kha.arrays.Float32Array(vertexIndices.length * 3);
 		inda = new kha.arrays.Uint32Array(vertexIndices.length);
