@@ -28,6 +28,7 @@ class ObjParser {
 		var tempNormals:Array<Float> = [];
 
 		name = lastName;
+		var isNext = startPos > 0;
 
 		while (true) {
 
@@ -110,15 +111,17 @@ class ObjParser {
 					lastName = words[1];
 					if (name == "") name = lastName;
 				}
-				if (startPos > 0 || hasNext) { // Pass through the first "o"
+				if (startPos > 0) { // Pass through the first "o"
 					hasNext = true;
 					break;
 				}
-				hasNext = true;
+				startPos = pos;
 			}
 		}
 
-		if (startPos > 0) {
+		if (!hasNext) lastName = "";
+
+		if (isNext) {
 			for (i in 0...vertexIndices.length) vertexIndices[i] -= vindOff;
 			for (i in 0...uvIndices.length) uvIndices[i] -= tindOff;
 			for (i in 0...normalIndices.length) normalIndices[i] -= nindOff;

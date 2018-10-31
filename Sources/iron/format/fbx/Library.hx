@@ -697,6 +697,7 @@ class Geometry {
 			if (i < 0) {
 				for( n in 0...count ) vlen++;
 				for( n in 0...count - 2 ) ilen += 3;
+				count = 0;
 			}
 		}
 
