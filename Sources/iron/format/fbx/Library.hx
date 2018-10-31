@@ -581,6 +581,13 @@ class Library {
 		var geom = FbxTools.getAll(root, "Objects.Geometry")[0];
 		return new Geometry(this, geom);
 	}
+
+	public function getAllGeometries() {
+		var geoms = FbxTools.getAll(root, "Objects.Geometry");
+		var res:Array<Geometry> = [];
+		for (g in geoms) res.push(new Geometry(this, g));
+		return res;
+	}
 }
 
 class Geometry {
