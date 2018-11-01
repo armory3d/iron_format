@@ -36,6 +36,7 @@ class FbxParser {
 		texa = res.texa;
 		inda = res.inda;
 		name = FbxTools.getName(geoms[current].getRoot());
+		name = name.substring(0, name.length - 10); // -Geometry
 		current++;
 		return true;
 	}
