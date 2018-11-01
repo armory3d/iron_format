@@ -11,7 +11,6 @@ class ObjParser {
 	public var hasNext = false; // File contains multiple objects
 	public var pos = 0;
 	
-	static var lastName = "";
 	static var vindOff = 0;
 	static var tindOff = 0;
 	static var nindOff = 0;
@@ -27,8 +26,8 @@ class ObjParser {
 		var tempUVs:Array<Float> = [];
 		var tempNormals:Array<Float> = [];
 
-		name = lastName;
-		var isNext = startPos > 0;
+		var readingFaces = false;
+		var readingObject = false;
 
 		while (true) {
 
@@ -36,20 +35,31 @@ class ObjParser {
 
 			var line = "";
 
+			var i = 0;
 			while (true) {
 				var c = String.fromCharCode(blob.readU8(pos));
+
+				if (i == 0 && readingObject && readingFaces && (c == "v" || c == "o")) {
+					hasNext = true;
+					break;
+				}
+
 				pos++;
+				i++;
 				if (c == "\n") break;
 				if (pos >= blob.length) break;
 				line += c;
 			}
 
+			if (hasNext) break;
+
 			var words:Array<String> = line.split(" ");
 
 			if (words[0] == "v") {
-				tempPositions.push(Std.parseFloat(words[1]));
-				tempPositions.push(Std.parseFloat(words[2]));
-				tempPositions.push(Std.parseFloat(words[3]));
+				// Some exporters put space after "v"
+				tempPositions.push(Std.parseFloat(words[words.length - 3]));
+				tempPositions.push(Std.parseFloat(words[words.length - 2]));
+				tempPositions.push(Std.parseFloat(words[words.length - 1]));
 			}
 			else if (words[0] == "vt") {
 				tempUVs.push(Std.parseFloat(words[1]));
@@ -61,6 +71,7 @@ class ObjParser {
 				tempNormals.push(Std.parseFloat(words[3]));
 			}
 			else if (words[0] == "f") {
+				readingFaces = true;
 				var sec1:Array<String> = words[1].split("/");
 				var sec2:Array<String> = words[2].split("/");
 				var sec3:Array<String> = words[3].split("/");
@@ -106,22 +117,14 @@ class ObjParser {
 					}
 				}
 			}
+			// else if (words[0] == "o" || words[0] == "g") {
 			else if (words[0] == "o") {
-				if (words.length > 1) {
-					lastName = words[1];
-					if (name == "") name = lastName;
-				}
-				if (startPos > 0) { // Pass through the first "o"
-					hasNext = true;
-					break;
-				}
-				startPos = pos;
+				readingObject = true;
+				if (words.length > 1) name = words[words.length - 1];
 			}
 		}
 
-		if (!hasNext) lastName = "";
-
-		if (isNext) {
+		if (startPos > 0) {
 			for (i in 0...vertexIndices.length) vertexIndices[i] -= vindOff;
 			for (i in 0...uvIndices.length) uvIndices[i] -= tindOff;
 			for (i in 0...normalIndices.length) normalIndices[i] -= nindOff;
