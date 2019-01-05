@@ -2,9 +2,9 @@ package iron.format.obj;
 
 class ObjParser {
 
-	public var posa:kha.arrays.Float32Array = null;
-	public var nora:kha.arrays.Float32Array = null;
-	public var texa:kha.arrays.Float32Array = null;
+	public var posa:kha.arrays.Int16Array = null;
+	public var nora:kha.arrays.Int16Array = null;
+	public var texa:kha.arrays.Int16Array = null;
 	public var inda:kha.arrays.Uint32Array = null;
 	public var name = "";
 
@@ -136,26 +136,26 @@ class ObjParser {
 		tindOff += Std.int(tempUVs.length / 2);
 		nindOff += Std.int(tempNormals.length / 3);
 
-		posa = new kha.arrays.Float32Array(vertexIndices.length * 3);
+		posa = new kha.arrays.Int16Array(vertexIndices.length * 4);
 		inda = new kha.arrays.Uint32Array(vertexIndices.length);
 		for (i in 0...vertexIndices.length) {
-			posa[i * 3] = tempPositions[(vertexIndices[i] - 1) * 3];
-			posa[i * 3 + 1] = -tempPositions[(vertexIndices[i] - 1) * 3 + 2];
-			posa[i * 3 + 2] = tempPositions[(vertexIndices[i] - 1) * 3 + 1];
+			posa[i * 4    ] = Std.int( tempPositions[(vertexIndices[i] - 1) * 3    ] * 32767);
+			posa[i * 4 + 1] = Std.int(-tempPositions[(vertexIndices[i] - 1) * 3 + 2] * 32767);
+			posa[i * 4 + 2] = Std.int( tempPositions[(vertexIndices[i] - 1) * 3 + 1] * 32767);
 			inda[i] = i;
 		}
 
 		if (normalIndices.length > 0) {
-			nora = new kha.arrays.Float32Array(normalIndices.length * 3);
+			nora = new kha.arrays.Int16Array(normalIndices.length * 2);
 			for (i in 0...vertexIndices.length) {
-				nora[i * 3] = tempNormals[(normalIndices[i] - 1) * 3];
-				nora[i * 3 + 1] = -tempNormals[(normalIndices[i] - 1) * 3 + 2];
-				nora[i * 3 + 2] = tempNormals[(normalIndices[i] - 1) * 3 + 1];
+				nora[i * 2    ] = Std.int( tempNormals[(normalIndices[i] - 1) * 3    ] * 32767);
+				nora[i * 2 + 1] = Std.int(-tempNormals[(normalIndices[i] - 1) * 3 + 2] * 32767);
+				posa[i * 4 + 3] = Std.int( tempNormals[(normalIndices[i] - 1) * 3 + 1] * 32767);
 			}
 		}
 		else {
 			// Calc normals
-			nora = new kha.arrays.Float32Array(inda.length * 3);
+			nora = new kha.arrays.Int16Array(inda.length * 2);
 			var va = new iron.math.Vec4();
 			var vb = new iron.math.Vec4();
 			var vc = new iron.math.Vec4();
@@ -172,18 +172,23 @@ class ObjParser {
 				ab.subvecs(va, vb);
 				cb.cross(ab);
 				cb.normalize();
-
-				nora[i1 * 3] = cb.x; nora[i1 * 3 + 1] = cb.y; nora[i1 * 3 + 2] = cb.z;
-				nora[i2 * 3] = cb.x; nora[i2 * 3 + 1] = cb.y; nora[i2 * 3 + 2] = cb.z;
-				nora[i3 * 3] = cb.x; nora[i3 * 3 + 1] = cb.y; nora[i3 * 3 + 2] = cb.z;
+				nora[i1 * 2    ] = Std.int(cb.x * 32767);
+				nora[i1 * 2 + 1] = Std.int(cb.y * 32767);
+				posa[i1 * 4 + 3] = Std.int(cb.z * 32767);
+				nora[i2 * 2    ] = Std.int(cb.x * 32767);
+				nora[i2 * 2 + 1] = Std.int(cb.y * 32767);
+				posa[i2 * 4 + 3] = Std.int(cb.z * 32767);
+				nora[i3 * 2    ] = Std.int(cb.x * 32767);
+				nora[i3 * 2 + 1] = Std.int(cb.y * 32767);
+				posa[i3 * 4 + 3] = Std.int(cb.z * 32767);
 			}
 		}
 
 		if (uvIndices.length > 0) {
-			texa = new kha.arrays.Float32Array(uvIndices.length * 2);
+			texa = new kha.arrays.Int16Array(uvIndices.length * 2);
 			for (i in 0...vertexIndices.length) {
-				texa[i * 2] = tempUVs[(uvIndices[i] - 1) * 2];
-				texa[i * 2 + 1] = 1.0 - tempUVs[(uvIndices[i] - 1) * 2 + 1];
+				texa[i * 2    ] = Std.int(       tempUVs[(uvIndices[i] - 1) * 2    ]  * 32767);
+				texa[i * 2 + 1] = Std.int((1.0 - tempUVs[(uvIndices[i] - 1) * 2 + 1]) * 32767);
 			}
 		}
 	}

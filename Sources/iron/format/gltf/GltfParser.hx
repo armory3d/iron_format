@@ -2,9 +2,9 @@ package iron.format.gltf;
 
 class GltfParser {
 
-	public var posa:kha.arrays.Float32Array = null;
-	public var nora:kha.arrays.Float32Array = null;
-	public var texa:kha.arrays.Float32Array = null;
+	public var posa:kha.arrays.Int16Array = null;
+	public var nora:kha.arrays.Int16Array = null;
+	public var texa:kha.arrays.Int16Array = null;
 	public var inda:kha.arrays.Uint32Array = null;
 	public var name = "";
 
@@ -35,9 +35,27 @@ class GltfParser {
 		case 2: inda = readU16Array(format, b, a);
 		default: inda = readU32Array(format, b, a);
 		}
-		posa = readF32Array(format, b, format.accessors[prim.attributes.POSITION]);
-		nora = readF32Array(format, b, format.accessors[prim.attributes.NORMAL]);
-		if (prim.attributes.TEXCOORD_0 != null) texa = readF32Array(format, b, format.accessors[prim.attributes.TEXCOORD_0]);
+		var posa32 = readF32Array(format, b, format.accessors[prim.attributes.POSITION]);
+		var nora32 = readF32Array(format, b, format.accessors[prim.attributes.NORMAL]);
+		var texa32 = prim.attributes.TEXCOORD_0 != null ? readF32Array(format, b, format.accessors[prim.attributes.TEXCOORD_0]) : null;
+
+		// Pack into 16bit
+		var verts = Std.int(posa32.length / 3);
+		posa = new kha.arrays.Int16Array(verts * 4);
+		nora = new kha.arrays.Int16Array(verts * 2);
+		texa = texa32 != null ? new kha.arrays.Int16Array(verts * 2) : null;
+		for (i in 0...verts) {
+			posa[i * 4    ] = Std.int(posa32[i * 3    ] * 32767);
+			posa[i * 4 + 1] = Std.int(posa32[i * 3 + 1] * 32767);
+			posa[i * 4 + 2] = Std.int(posa32[i * 3 + 2] * 32767);
+			posa[i * 4 + 3] = Std.int(nora32[i * 3 + 2] * 32767);
+			nora[i * 2    ] = Std.int(nora32[i * 3    ] * 32767);
+			nora[i * 2 + 1] = Std.int(nora32[i * 3 + 1] * 32767);
+			if (texa != null) {
+				texa[i * 2    ] = Std.int(texa32[i * 2    ] * 32767);
+				texa[i * 2 + 1] = Std.int(texa32[i * 2 + 1] * 32767);
+			}
+		}
 	}
 
 	function readU8Array(format:TGLTF, b:kha.Blob, a:TAccessor):kha.arrays.Uint32Array {
