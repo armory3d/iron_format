@@ -6,6 +6,8 @@ class GltfParser {
 	public var nora:kha.arrays.Int16Array = null;
 	public var texa:kha.arrays.Int16Array = null;
 	public var inda:kha.arrays.Uint32Array = null;
+	public var scalePos = 1.0;
+	public var scaleTex = 1.0;
 	public var name = "";
 
 	public function new(blob:kha.Blob) {
@@ -39,15 +41,30 @@ class GltfParser {
 		var nora32 = readF32Array(format, b, format.accessors[prim.attributes.NORMAL]);
 		var texa32 = prim.attributes.TEXCOORD_0 != null ? readF32Array(format, b, format.accessors[prim.attributes.TEXCOORD_0]) : null;
 
+		// Pack positions to (-1, 1) range
+		var hx = 0.0;
+		var hy = 0.0;
+		var hz = 0.0;
+		for (i in 0...Std.int(posa32.length / 3)) {
+			var f = Math.abs(posa32[i * 3]);
+			if (hx < f) hx = f;
+			f = Math.abs(posa32[i * 3 + 1]);
+			if (hy < f) hy = f;
+			f = Math.abs(posa32[i * 3 + 2]);
+			if (hz < f) hz = f;
+		}
+		scalePos = Math.max(hx, Math.max(hy, hz));
+		var inv = 1 / scalePos;
+
 		// Pack into 16bit
 		var verts = Std.int(posa32.length / 3);
 		posa = new kha.arrays.Int16Array(verts * 4);
 		nora = new kha.arrays.Int16Array(verts * 2);
 		texa = texa32 != null ? new kha.arrays.Int16Array(verts * 2) : null;
 		for (i in 0...verts) {
-			posa[i * 4    ] = Std.int(posa32[i * 3    ] * 32767);
-			posa[i * 4 + 1] = Std.int(posa32[i * 3 + 1] * 32767);
-			posa[i * 4 + 2] = Std.int(posa32[i * 3 + 2] * 32767);
+			posa[i * 4    ] = Std.int(posa32[i * 3    ] * 32767 * inv);
+			posa[i * 4 + 1] = Std.int(posa32[i * 3 + 1] * 32767 * inv);
+			posa[i * 4 + 2] = Std.int(posa32[i * 3 + 2] * 32767 * inv);
 			posa[i * 4 + 3] = Std.int(nora32[i * 3 + 2] * 32767);
 			nora[i * 2    ] = Std.int(nora32[i * 3    ] * 32767);
 			nora[i * 2 + 1] = Std.int(nora32[i * 3 + 1] * 32767);

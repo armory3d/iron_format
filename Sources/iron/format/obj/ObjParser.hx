@@ -6,6 +6,8 @@ class ObjParser {
 	public var nora:kha.arrays.Int16Array = null;
 	public var texa:kha.arrays.Int16Array = null;
 	public var inda:kha.arrays.Uint32Array = null;
+	public var scalePos = 1.0;
+	public var scaleTex = 1.0;
 	public var name = "";
 
 	public var hasNext = false; // File contains multiple objects
@@ -136,12 +138,27 @@ class ObjParser {
 		tindOff += Std.int(tempUVs.length / 2);
 		nindOff += Std.int(tempNormals.length / 3);
 
+		// Pack positions to (-1, 1) range
+		var hx = 0.0;
+		var hy = 0.0;
+		var hz = 0.0;
+		for (i in 0...Std.int(tempPositions.length / 3)) {
+			var f = Math.abs(tempPositions[i * 3]);
+			if (hx < f) hx = f;
+			f = Math.abs(tempPositions[i * 3 + 1]);
+			if (hy < f) hy = f;
+			f = Math.abs(tempPositions[i * 3 + 2]);
+			if (hz < f) hz = f;
+		}
+		scalePos = Math.max(hx, Math.max(hy, hz));
+		var inv = 1 / scalePos;
+
 		posa = new kha.arrays.Int16Array(vertexIndices.length * 4);
 		inda = new kha.arrays.Uint32Array(vertexIndices.length);
 		for (i in 0...vertexIndices.length) {
-			posa[i * 4    ] = Std.int( tempPositions[(vertexIndices[i] - 1) * 3    ] * 32767);
-			posa[i * 4 + 1] = Std.int(-tempPositions[(vertexIndices[i] - 1) * 3 + 2] * 32767);
-			posa[i * 4 + 2] = Std.int( tempPositions[(vertexIndices[i] - 1) * 3 + 1] * 32767);
+			posa[i * 4    ] = Std.int( tempPositions[(vertexIndices[i] - 1) * 3    ] * 32767 * inv);
+			posa[i * 4 + 1] = Std.int(-tempPositions[(vertexIndices[i] - 1) * 3 + 2] * 32767 * inv);
+			posa[i * 4 + 2] = Std.int( tempPositions[(vertexIndices[i] - 1) * 3 + 1] * 32767 * inv);
 			inda[i] = i;
 		}
 
