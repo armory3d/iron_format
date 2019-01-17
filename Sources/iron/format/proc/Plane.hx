@@ -27,7 +27,7 @@ class Plane {
 			var y = (Std.int(i / vertsX)) * stepY;
 			posa[i * 4    ] = Std.int(x * 32767 * inv);
 			posa[i * 4 + 1] = Std.int(y * 32767 * inv);
-			posa[i * 4 + 2] = Std.random(3000);
+			posa[i * 4 + 2] = 0;
 			nora[i * 2    ] = 0;
 			nora[i * 2 + 1] = 0;
 			posa[i * 4 + 3] = 32767;
