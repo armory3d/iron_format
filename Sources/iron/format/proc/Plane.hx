@@ -13,7 +13,9 @@ class Plane {
 
 	public function new(sizeX = 1.0, sizeY = 1.0, vertsX = 2, vertsY = 2) {
 		// Pack positions to (-1, 1) range
-		scalePos = Math.max(sizeX, sizeY);
+		var halfX = sizeX / 2;
+		var halfY = sizeY / 2;
+		scalePos = Math.max(halfX, halfY);
 		var inv = 1 / scalePos;
 
 		posa = new kha.arrays.Int16Array(vertsX * vertsY * 4);
@@ -23,8 +25,8 @@ class Plane {
 		var stepX = sizeX / (vertsX - 1);
 		var stepY = sizeY / (vertsY - 1);
 		for (i in 0...vertsX * vertsY) {
-			var x = (i % vertsX) * stepX;
-			var y = (Std.int(i / vertsX)) * stepY;
+			var x = (i % vertsX) * stepX - halfX;
+			var y = Std.int(i / vertsX) * stepY - halfY;
 			posa[i * 4    ] = Std.int(x * 32767 * inv);
 			posa[i * 4 + 1] = Std.int(y * 32767 * inv);
 			posa[i * 4 + 2] = 0;
