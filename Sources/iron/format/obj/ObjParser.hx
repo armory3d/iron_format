@@ -38,22 +38,19 @@ class ObjParser {
 			var line = "";
 
 			var i = 0;
-			while (true) {
-				var c = String.fromCharCode(blob.readU8(pos));
-
-				if (i == 0 && readingObject && readingFaces && (c == "v" || c == "o")) {
-					hasNext = true;
-					break;
-				}
-
-				pos++;
-				i++;
-				if (c == "\n") break;
-				if (pos >= blob.length) break;
-				line += c;
+			var c = String.fromCharCode(blob.readU8(pos));
+			if (readingObject && readingFaces && (c == "v" || c == "o")) {
+				hasNext = true;
+				break;
 			}
 
-			if (hasNext) break;
+			while (true) {
+				c = String.fromCharCode(blob.readU8(pos));
+				pos++;
+				i++;
+				if (c == "\n" || pos >= blob.length) break;
+				line += c;
+			}
 
 			var words:Array<String> = line.split(" ");
 
@@ -79,42 +76,42 @@ class ObjParser {
 				var sec3:Array<String> = words[3].split("/");
 				var sec4:Array<String> = words.length > 4 ? words[4].split("/") : null;
 
-				var vi0 = Std.int(Std.parseFloat(sec1[0]));
-				var vi1 = Std.int(Std.parseFloat(sec2[0]));
-				var vi2 = Std.int(Std.parseFloat(sec3[0]));
+				var vi0 = Std.parseInt(sec1[0]);
+				var vi1 = Std.parseInt(sec2[0]);
+				var vi2 = Std.parseInt(sec3[0]);
 				vertexIndices.push(vi0);
 				vertexIndices.push(vi1);
 				vertexIndices.push(vi2);
 				if (words.length > 4) {
 					vertexIndices.push(vi2);
-					vertexIndices.push(Std.int(Std.parseFloat(sec4[0])));
+					vertexIndices.push(Std.parseInt(sec4[0]));
 					vertexIndices.push(vi0);
 				}
 
 				if (tempUVs.length > 0) {
-					var vuv0 = Std.int(Std.parseFloat(sec1[1]));
-					var vuv1 = Std.int(Std.parseFloat(sec2[1]));
-					var vuv2 = Std.int(Std.parseFloat(sec3[1]));
+					var vuv0 = Std.parseInt(sec1[1]);
+					var vuv1 = Std.parseInt(sec2[1]);
+					var vuv2 = Std.parseInt(sec3[1]);
 					uvIndices.push(vuv0);
 					uvIndices.push(vuv1);
 					uvIndices.push(vuv2);
 					if (words.length > 4) {
 						uvIndices.push(vuv2);
-						uvIndices.push(Std.int(Std.parseFloat(sec4[1])));
+						uvIndices.push(Std.parseInt(sec4[1]));
 						uvIndices.push(vuv0);
 					}
 				}
 				
 				if (tempNormals.length > 0) {
-					var vn0 = Std.int(Std.parseFloat(sec1[2]));
-					var vn1 = Std.int(Std.parseFloat(sec2[2]));
-					var vn2 = Std.int(Std.parseFloat(sec3[2]));
+					var vn0 = Std.parseInt(sec1[2]);
+					var vn1 = Std.parseInt(sec2[2]);
+					var vn2 = Std.parseInt(sec3[2]);
 					normalIndices.push(vn0);
 					normalIndices.push(vn1);
 					normalIndices.push(vn2);
 					if (words.length > 4) {
 						normalIndices.push(vn2);
-						normalIndices.push(Std.int(Std.parseFloat(sec4[2])));
+						normalIndices.push(Std.parseInt(sec4[2]));
 						normalIndices.push(vn0);
 					}
 				}
@@ -151,14 +148,14 @@ class ObjParser {
 			if (hz < f) hz = f;
 		}
 		scalePos = Math.max(hx, Math.max(hy, hz));
-		var inv = 1 / scalePos;
+		var inv = 32767 * (1 / scalePos);
 
 		posa = new kha.arrays.Int16Array(vertexIndices.length * 4);
 		inda = new kha.arrays.Uint32Array(vertexIndices.length);
 		for (i in 0...vertexIndices.length) {
-			posa[i * 4    ] = Std.int( tempPositions[(vertexIndices[i] - 1) * 3    ] * 32767 * inv);
-			posa[i * 4 + 1] = Std.int(-tempPositions[(vertexIndices[i] - 1) * 3 + 2] * 32767 * inv);
-			posa[i * 4 + 2] = Std.int( tempPositions[(vertexIndices[i] - 1) * 3 + 1] * 32767 * inv);
+			posa[i * 4    ] = Std.int( tempPositions[(vertexIndices[i] - 1) * 3    ] * inv);
+			posa[i * 4 + 1] = Std.int(-tempPositions[(vertexIndices[i] - 1) * 3 + 2] * inv);
+			posa[i * 4 + 2] = Std.int( tempPositions[(vertexIndices[i] - 1) * 3 + 1] * inv);
 			inda[i] = i;
 		}
 
