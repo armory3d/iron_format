@@ -6,7 +6,8 @@ class ObjParser {
 	public var nora:kha.arrays.Int16Array = null;
 	public var texa:kha.arrays.Int16Array = null;
 	public var inda:kha.arrays.Uint32Array = null;
-	public var udims:Array<kha.arrays.Uint32Array> = null; // Indices per udim tile
+	public var udims:Array<kha.arrays.Uint32Array> = null; // Indices split per udim tile
+	public var udimsU = 1; // Number of horizontal udim tiles
 	public var scalePos = 1.0;
 	public var scaleTex = 1.0;
 	public var name = "";
@@ -147,7 +148,7 @@ class ObjParser {
 			}
 			// else if (words[0] == "o" || words[0] == "g") {
 			else if (words[0] == "o") {
-				readingObject = true;
+				if (!udim) readingObject = true;
 				if (words.length > 1) name = words[words.length - 1];
 			}
 		}
@@ -222,55 +223,65 @@ class ObjParser {
 
 		if (uvIndices.length > 0) {
 			if (udim) {
-				// Find number of horizontal tiles
-				var tiles = 1;
-				for (f in tempUVs) while (f > tiles) tiles++;
+				// Find number of tiles
+				var tilesU = 1;
+				var tilesV = 1;
+				for (i in 0...Std.int(tempUVs.length / 2)) {
+					while (tempUVs[i * 2    ] > tilesU) tilesU++;
+					while (tempUVs[i * 2 + 1] > tilesV) tilesV++;
+				}
+
+				function getTile(i1:Int, i2:Int, i3:Int):Int {
+					var u1 = tempUVs[(uvIndices[i1] - 1) * 2    ];
+					var v1 = tempUVs[(uvIndices[i1] - 1) * 2 + 1];
+					var u2 = tempUVs[(uvIndices[i2] - 1) * 2    ];
+					var v2 = tempUVs[(uvIndices[i2] - 1) * 2 + 1];
+					var u3 = tempUVs[(uvIndices[i3] - 1) * 2    ];
+					var v3 = tempUVs[(uvIndices[i3] - 1) * 2 + 1];
+					var tileU = Std.int((u1 + u2 + u3) / 3);
+					var tileV = Std.int((v1 + v2 + v3) / 3);
+					return tileU + tileV * tilesU;
+				}
 				
 				// Amount of indices pre tile
-				var num = new kha.arrays.Uint32Array(tiles);
+				var num = new kha.arrays.Uint32Array(tilesU * tilesV);
 				for (i in 0...Std.int(inda.length / 3)) {
-					var i1 = inda[i * 3    ];
-					var i2 = inda[i * 3 + 1];
-					var i3 = inda[i * 3 + 2];
-					var u1 = tempUVs[(uvIndices[i1] - 1) * 2];
-					var u2 = tempUVs[(uvIndices[i2] - 1) * 2];
-					var u3 = tempUVs[(uvIndices[i3] - 1) * 2];
-					var tile = Std.int((u1 + u2 + u3) / 3);
+					var tile = getTile(inda[i * 3], inda[i * 3 + 1], inda[i * 3 + 2]);
 					num[tile] += 3;
 				}
 
 				// Split indices per tile
 				udims = [];
-				for (i in 0...tiles) { udims.push(new kha.arrays.Uint32Array(num[i])); num[i] = 0; }
+				udimsU = tilesU;
+				for (i in 0...tilesU * tilesV) { udims.push(new kha.arrays.Uint32Array(num[i])); num[i] = 0; }
 
 				for (i in 0...Std.int(inda.length / 3)) {
 					var i1 = inda[i * 3    ];
 					var i2 = inda[i * 3 + 1];
 					var i3 = inda[i * 3 + 2];
-					var u1 = tempUVs[(uvIndices[i1] - 1) * 2];
-					var u2 = tempUVs[(uvIndices[i2] - 1) * 2];
-					var u3 = tempUVs[(uvIndices[i3] - 1) * 2];
-					var tile = Std.int((u1 + u2 + u3) / 3);
+					var tile = getTile(i1, i2, i3);
 					udims[tile][num[tile]++] = i1;
 					udims[tile][num[tile]++] = i2;
 					udims[tile][num[tile]++] = i3;
 				}
 
 				// Normalize uvs to 0-1 range
-				var uvtiles = new kha.arrays.Int16Array(Std.int(tempUVs.length / 2));
+				var uvtiles = new kha.arrays.Int16Array(tempUVs.length);
 				for (i in 0...Std.int(inda.length / 3)) { // TODO: merge loops
 					var i1 = inda[i * 3    ];
 					var i2 = inda[i * 3 + 1];
 					var i3 = inda[i * 3 + 2];
-					var u1 = tempUVs[(uvIndices[i1] - 1) * 2];
-					var u2 = tempUVs[(uvIndices[i2] - 1) * 2];
-					var u3 = tempUVs[(uvIndices[i3] - 1) * 2];
-					var tile = Std.int((u1 + u2 + u3) / 3);
-					uvtiles[uvIndices[i1] - 1] = tile;
-					uvtiles[uvIndices[i2] - 1] = tile;
-					uvtiles[uvIndices[i3] - 1] = tile;
+					var tile = getTile(i1, i2, i3);
+					var tileU = tile % tilesU;
+					var tileV = Std.int(tile / tilesU);
+					uvtiles[(uvIndices[i1] - 1) * 2    ] = tileU;
+					uvtiles[(uvIndices[i1] - 1) * 2 + 1] = tileV;
+					uvtiles[(uvIndices[i2] - 1) * 2    ] = tileU;
+					uvtiles[(uvIndices[i2] - 1) * 2 + 1] = tileV;
+					uvtiles[(uvIndices[i3] - 1) * 2    ] = tileU;
+					uvtiles[(uvIndices[i3] - 1) * 2 + 1] = tileV;
 				}
-				for (i in 0...uvtiles.length) tempUVs[i * 2] -= uvtiles[i];
+				for (i in 0...uvtiles.length) tempUVs[i] -= uvtiles[i];
 			}
 
 			texa = new kha.arrays.Int16Array(uvIndices.length * 2);
