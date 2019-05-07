@@ -24,7 +24,7 @@ class Blend {
 	public var littleEndian:Bool;
 	// Data
 	public var blocks:Array<Block> = [];
-	public var dna:Dna;
+	public var dna:Dna = null;
 	public var map = new Map<Int, Map<Int, Block>>(); // Map blocks by memory address
 
 	public function new(blob:Blob) {
@@ -50,6 +50,7 @@ class Blend {
 	}
 
 	public function get(type:String):Array<Handle> {
+		if (dna == null) return null;
 		// Return all structures of type
 		var typeIndex = getTypeIndex(dna, type);
 		if (typeIndex == -1) return null;
