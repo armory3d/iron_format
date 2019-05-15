@@ -333,7 +333,7 @@ class Handle {
 		if (s.charAt(s.length - 1) == ']') s = s.substring(0, s.indexOf('['));
 		return s;
 	}
-	public function get(name:String, index = 0):Dynamic {
+	public function get(name:String, index = 0, asType:String = null):Dynamic {
 		// Return raw type or structure
 		var dna = ds.dna;
 		for (i in 0...ds.fieldNames.length) {
@@ -344,6 +344,12 @@ class Handle {
 				var type = dna.types[typeIndex];
 				var newOffset = offset;
 				for (j in 0...i) newOffset += getSize(j);
+				// Cast void* to type
+				if (asType != null) {
+					for (i in 0...dna.types.length) {
+						if (dna.types[i] == asType) { typeIndex = i; break; }
+					}
+				}
 				// Raw type
 				if (typeIndex < 12) {
 					var blend = block.blend;
@@ -360,8 +366,8 @@ class Handle {
 					case 'double': return 0; //blend.readf64();
 					case 'long': return isArray ? blend.read32array(len) : blend.read32();
 					case 'ulong': return isArray ? blend.read32array(len) : blend.read32();
-					case 'int64_t': return 0; //blend.read64();
-					case 'uint64_t': return 0; //blend.read64();
+					case 'int64_t': return blend.read64();
+					case 'uint64_t': return blend.read64();
 					case 'void': return 0;
 					}
 				}
