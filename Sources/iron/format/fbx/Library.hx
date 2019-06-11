@@ -687,13 +687,26 @@ class Geometry {
 		return uvs;
 	}
 
-	public function getBuffers(binary:Bool) {
+	public function getBuffers(binary:Bool, p:FbxParser) {
 		// triangulize indexes :
 		// format is  A,B,...,-X : negative values mark the end of the polygon
 		var pbuf = getVertices();
 		var nbuf = getNormals();
 		var tbuf = getUVs()[0];
 		var polys = getPolygons();
+
+		if (FbxParser.parseTransform) {
+			for (i in 0...Std.int(pbuf.length / 3)) {
+				pbuf[i * 3    ] *= p.sx;
+				// q.fromEuler(p.rx, p.ry, p.rz);
+				// v.applyQuat(q);
+				pbuf[i * 3    ] += p.tx;
+				pbuf[i * 3 + 1] *= p.sy;
+				pbuf[i * 3 + 1] += p.ty;
+				pbuf[i * 3 + 2] *= p.sz;
+				pbuf[i * 3 + 2] += p.tz;
+			}
+		}
 
 		// Pack positions to (-1, 1) range
 		var scalePos = 0.0;

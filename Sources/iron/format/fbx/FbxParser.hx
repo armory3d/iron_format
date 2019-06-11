@@ -49,22 +49,11 @@ class FbxParser {
 		if (current >= geoms.length) return false;
 		var geom = geoms[current];
 		var lib = geom.lib;
-		var res = geom.getBuffers(binary);
-		scalePos = res.scalePos;
-		posa = res.posa;
-		nora = res.nora;
-		texa = res.texa;
-		inda = res.inda;
-		name = FbxTools.getName(geom.getRoot());
-		if (name.charCodeAt(0) == 0) name = name.substring(1); // null
-		if (name.charCodeAt(0) == 1) name = name.substring(1); // start of heading
-		if (name == "Geometry") name = "Object -Geometry";
-		name = name.substring(0, name.length - 10); // -Geometry
 
+		tx = ty = tz = 0;
+		rx = ry = rz = 0;
+		sx = sy = sz = 1;
 		if (parseTransform) {
-			tx = ty = tz = 0;
-			rx = ry = rz = 0;
-			sx = sy = sz = 1;
 			var connects = lib.invConnect.get(FbxTools.getId(geom.getRoot()));
 			for (c in connects) {
 				var node = lib.ids.get(c);
@@ -87,6 +76,18 @@ class FbxParser {
 				}
 			}
 		}
+
+		var res = geom.getBuffers(binary, this);
+		scalePos = res.scalePos;
+		posa = res.posa;
+		nora = res.nora;
+		texa = res.texa;
+		inda = res.inda;
+		name = FbxTools.getName(geom.getRoot());
+		if (name.charCodeAt(0) == 0) name = name.substring(1); // null
+		if (name.charCodeAt(0) == 1) name = name.substring(1); // start of heading
+		if (name == "Geometry") name = "Object -Geometry";
+		name = name.substring(0, name.length - 10); // -Geometry
 
 		current++;
 		return true;
