@@ -2,6 +2,8 @@ package iron.format.fbx;
 
 import iron.format.fbx.Library;
 
+@:access(iron.format.fbx.Library)
+@:access(iron.format.fbx.Geometry)
 class FbxParser {
 
 	public var posa:kha.arrays.Int16Array = null;
@@ -11,7 +13,19 @@ class FbxParser {
 	public var scalePos = 1.0;
 	public var scaleTex = 1.0;
 	public var name = "";
-	
+
+	// Transform
+	public static var parseTransform = false;
+	public var tx = 0.0;
+	public var ty = 0.0;
+	public var tz = 0.0;
+	public var rx = 0.0;
+	public var ry = 0.0;
+	public var rz = 0.0;
+	public var sx = 1.0;
+	public var sy = 1.0;
+	public var sz = 1.0;
+
 	var geoms:Array<Geometry>;
 	var current = 0;
 	var binary = true;
@@ -33,44 +47,47 @@ class FbxParser {
 
 	public function next():Bool {
 		if (current >= geoms.length) return false;
-		var res = geoms[current].getBuffers(binary);
-		
-		// Pack positions to (-1, 1) range
-		var hx = 0.0;
-		var hy = 0.0;
-		var hz = 0.0;
-		for (i in 0...Std.int(res.posa.length / 3)) {
-			var f = Math.abs(res.posa[i * 3]);
-			if (hx < f) hx = f;
-			f = Math.abs(res.posa[i * 3 + 1]);
-			if (hy < f) hy = f;
-			f = Math.abs(res.posa[i * 3 + 2]);
-			if (hz < f) hz = f;
-		}
-		scalePos = Math.max(hx, Math.max(hy, hz));
-		var inv = 1 / scalePos;
+		var geom = geoms[current];
+		var lib = geom.lib;
+		var res = geom.getBuffers(binary);
+		scalePos = res.scalePos;
+		posa = res.posa;
+		nora = res.nora;
+		texa = res.texa;
+		inda = res.inda;
+		name = FbxTools.getName(geom.getRoot());
+		if (name.charCodeAt(0) == 0) name = name.substring(1); // null
+		if (name.charCodeAt(0) == 1) name = name.substring(1); // start of heading
+		if (name == "Geometry") name = "Object -Geometry";
+		name = name.substring(0, name.length - 10); // -Geometry
 
-		// Pack into 16bit
-		var verts = Std.int(res.posa.length / 3);
-		posa = new kha.arrays.Int16Array(verts * 4);
-		nora = new kha.arrays.Int16Array(verts * 2);
-		texa = res.texa != null ? new kha.arrays.Int16Array(verts * 2) : null;
-		for (i in 0...verts) {
-			posa[i * 4    ] = Std.int(res.posa[i * 3    ] * 32767 * inv);
-			posa[i * 4 + 1] = Std.int(res.posa[i * 3 + 1] * 32767 * inv);
-			posa[i * 4 + 2] = Std.int(res.posa[i * 3 + 2] * 32767 * inv);
-			posa[i * 4 + 3] = Std.int(res.nora[i * 3 + 2] * 32767);
-			nora[i * 2    ] = Std.int(res.nora[i * 3    ] * 32767);
-			nora[i * 2 + 1] = Std.int(res.nora[i * 3 + 1] * 32767);
-			if (texa != null) {
-				texa[i * 2    ] = Std.int(res.texa[i * 2    ] * 32767);
-				texa[i * 2 + 1] = Std.int(res.texa[i * 2 + 1] * 32767);
+		if (parseTransform) {
+			tx = ty = tz = 0;
+			rx = ry = rz = 0;
+			sx = sy = sz = 1;
+			var connects = lib.invConnect.get(FbxTools.getId(geom.getRoot()));
+			for (c in connects) {
+				var node = lib.ids.get(c);
+				for (p in FbxTools.getAll(node, "Properties70.P")) {
+					switch(FbxTools.toString(p.props[0])) {
+					case "Lcl Translation":
+						tx = FbxTools.toFloat(p.props[4]) / 100;
+						ty = FbxTools.toFloat(p.props[5]) / 100;
+						tz = FbxTools.toFloat(p.props[6]) / 100;
+					case "Lcl Rotation":
+						rx = FbxTools.toFloat(p.props[4]) * Math.PI / 180;
+						ry = FbxTools.toFloat(p.props[5]) * Math.PI / 180;
+						rz = FbxTools.toFloat(p.props[6]) * Math.PI / 180;
+					case "Lcl Scaling":
+						sx = FbxTools.toFloat(p.props[4]) / 100;
+						sy = FbxTools.toFloat(p.props[5]) / 100;
+						sz = FbxTools.toFloat(p.props[6]) / 100;
+					default:
+					}
+				}
 			}
 		}
 
-		inda = res.inda;
-		name = FbxTools.getName(geoms[current].getRoot());
-		name = name.substring(0, name.length - 10); // -Geometry
 		current++;
 		return true;
 	}

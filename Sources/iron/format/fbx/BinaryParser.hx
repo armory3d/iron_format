@@ -142,7 +142,8 @@ class BinaryParser {
 	}
 
 	function read32():Int {
-		var i = blob.readS32LE(pos);
+		var i = blob.bytes.getInt32(pos);
+		// var i = blob.readS32LE(pos); // Result sometimes off by 1?
 		pos += 4;
 		return i;
 	}
@@ -150,7 +151,8 @@ class BinaryParser {
 	function read64():Int {
 		var i1 = read32();
 		var i2 = read32();
-		return cast haxe.Int64.make(i1, i2);
+		// return cast haxe.Int64.make(i1, i2);
+		return i1;
 	}
 
 	function readf32():Float {

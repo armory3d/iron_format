@@ -694,52 +694,62 @@ class Geometry {
 		var nbuf = getNormals();
 		var tbuf = getUVs()[0];
 		var polys = getPolygons();
-		var magic = binary ? 0 : 1; // ...
 
+		// Pack positions to (-1, 1) range
+		var scalePos = 0.0;
+		for (p in pbuf) {
+			var f = Math.abs(p);
+			if (scalePos < f) scalePos = f;
+		}
+		var inv = 32767 * (1 / scalePos);
+
+		var pos = 0;
 		var count = 0;
 		var vlen = 0;
 		var ilen = 0;
 		for (i in polys) {
 			count++;
 			if (i < 0) {
-				for( n in 0...count ) vlen++;
-				for( n in 0...count - 2 ) ilen += 3;
+				for (n in 0...count) vlen++;
+				for (n in 0...count - 2) ilen += 3;
 				count = 0;
 			}
+			pos++;
 		}
 
-		var posa = new kha.arrays.Float32Array(vlen * 3);
-		var nora = new kha.arrays.Float32Array(vlen * 3);
-		var texa = tbuf != null ? new kha.arrays.Float32Array(vlen * 2) : null;
+		// Pack into 16bit
+		var posa = new kha.arrays.Int16Array(vlen * 4);
+		var nora = new kha.arrays.Int16Array(vlen * 2);
+		var texa = tbuf != null ? new kha.arrays.Int16Array(vlen * 2) : null;
 		var inda = new kha.arrays.Uint32Array(ilen);
 
-		var pos = 0;
+		pos = 0;
 		count = 0;
 		vlen = 0;
 		ilen = 0;
-		for( i in polys ) {
+		for (i in polys) {
 			count++;
-			if( i < 0 ) {
-				polys[pos] = -i - magic;
+			if (i < 0) {
+				polys[pos] = -i - 1;
 				var start = pos - count + 1;
-				for( n in 0...count ) {
+				for (n in 0...count) {
 					var k = n + start;
 					var vidx = polys[k];
-					posa[vlen * 3    ] = pbuf[vidx * 3    ] * 0.01;
-					posa[vlen * 3 + 1] = pbuf[vidx * 3 + 1] * 0.01;
-					posa[vlen * 3 + 2] = pbuf[vidx * 3 + 2] * 0.01;
-					nora[vlen * 3    ] = nbuf[k * 3    ];
-					nora[vlen * 3 + 1] = nbuf[k * 3 + 1];
-					nora[vlen * 3 + 2] = nbuf[k * 3 + 2];
+					posa[vlen * 4    ] = Std.int(pbuf[vidx * 3    ] * inv);
+					posa[vlen * 4 + 1] = Std.int(pbuf[vidx * 3 + 1] * inv);
+					posa[vlen * 4 + 2] = Std.int(pbuf[vidx * 3 + 2] * inv);
+					posa[vlen * 4 + 3] = Std.int(nbuf[k * 3 + 2] * 32767);
+					nora[vlen * 2    ] = Std.int(nbuf[k * 3    ] * 32767);
+					nora[vlen * 2 + 1] = Std.int(nbuf[k * 3 + 1] * 32767);
 					if (tbuf != null) {
 						var iuv = tbuf.index[k];
-						texa[vlen * 2    ] =       tbuf.values[iuv * 2    ];
-						texa[vlen * 2 + 1] = 1.0 - tbuf.values[iuv * 2 + 1];
+						texa[vlen * 2    ] = Std.int(       tbuf.values[iuv * 2    ]  * 32767);
+						texa[vlen * 2 + 1] = Std.int((1.0 - tbuf.values[iuv * 2 + 1]) * 32767);
 					}
 					vlen++;
 				}
 				// polygons are actually triangle fans
-				for( n in 0...count - 2 ) {
+				for (n in 0...count - 2) {
 					inda[ilen + 2] = start + n;
 					inda[ilen + 1] = start + count - 1;
 					inda[ilen    ] = start + n + 1;
@@ -751,6 +761,6 @@ class Geometry {
 			pos++;
 		}
 
-		return { posa: posa, nora: nora, texa: texa, inda: inda };
+		return { posa: posa, nora: nora, texa: texa, inda: inda, scalePos: scalePos };
 	}
 }
