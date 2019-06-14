@@ -34,9 +34,10 @@ class Sphere {
 				var u = x / widthSegments;
 				var uPI2 = u * PI2;
 				var vPI  = v * Math.PI;
-				var vx = -radius * Math.cos(uPI2) * Math.sin(vPI);
+				var vPIsin = Math.sin(vPI);
+				var vx = -radius * Math.cos(uPI2) * vPIsin;
 				var vy =  radius * Math.cos(vPI);
-				var vz =  radius * Math.sin(uPI2) * Math.sin(vPI);
+				var vz =  radius * Math.sin(uPI2) * vPIsin;
 				var i4 = pos * 4;
 				var i2 = pos * 2;
 				posa[i4    ] = Std.int(vx * inv);
