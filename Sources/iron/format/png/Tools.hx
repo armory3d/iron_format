@@ -737,7 +737,6 @@ class Tools {
 		return l;
 	}
 
-	// armory
 	public static function build32RGBA( width : Int, height : Int, data : haxe.io.Bytes, ?level = 9 ) : Data {
 		var rgba = haxe.io.Bytes.alloc(width * height * 4 + height);
 		var w = 0, r = 0;
@@ -747,8 +746,7 @@ class Tools {
 				rgba.set(w++,data.get(r)); // r
 				rgba.set(w++,data.get(r+1)); // g
 				rgba.set(w++,data.get(r+2)); // b
-				// rgba.set(w++,data.get(r+3)); // a
-				rgba.set(w++,255); // armory
+				rgba.set(w++,data.get(r+3)); // a
 				r += 4;
 			}
 		}
@@ -759,7 +757,28 @@ class Tools {
 		return l;
 	}
 
-	public static function build32RGBA_( width : Int, height : Int, data : haxe.io.Bytes, off : Int, ?level = 9 ) : Data {
+	// armory
+	public static function build32RGB1( width : Int, height : Int, data : haxe.io.Bytes, ?level = 9 ) : Data {
+		var rgba = haxe.io.Bytes.alloc(width * height * 4 + height);
+		var w = 0, r = 0;
+		for( y in 0...height ) {
+			rgba.set(w++,0); // no filter for this scanline
+			for( x in 0...width ) {
+				rgba.set(w++,data.get(r)); // r
+				rgba.set(w++,data.get(r+1)); // g
+				rgba.set(w++,data.get(r+2)); // b
+				rgba.set(w++,255); // 1
+				r += 4;
+			}
+		}
+		var l = new List();
+		l.add(CHeader({ width : width, height : height, colbits : 8, color : ColTrue(true), interlaced : false }));
+		l.add(CData(iron.format.tools.Deflate.run(rgba,level)));
+		l.add(CEnd);
+		return l;
+	}
+
+	public static function build32RRR1( width : Int, height : Int, data : haxe.io.Bytes, off : Int, ?level = 9 ) : Data {
 		var rgba = haxe.io.Bytes.alloc(width * height * 4 + height);
 		var w = 0, r = 0;
 		for( y in 0...height ) {
@@ -768,7 +787,7 @@ class Tools {
 				rgba.set(w++,data.get(r+off)); // r
 				rgba.set(w++,data.get(r+off)); // r
 				rgba.set(w++,data.get(r+off)); // r
-				rgba.set(w++,255); // a
+				rgba.set(w++,255); // 1
 				r += 4;
 			}
 		}
