@@ -457,8 +457,8 @@ class FbxLibrary {
 	var connect : Map<Int,Array<Int>>;
 	var namedConnect : Map<Int,Map<String,Int>>;
 	var invConnect : Map<Int,Array<Int>>;
-	var uvAnims : Map<String, Array<{ t : Float, u : Float, v : Float }>>;
-	var animationEvents : Array<{ frame : Int, data : String }>;
+	// var uvAnims : Map<String, Array<{ t : Float, u : Float, v : Float }>>;
+	// var animationEvents : Array<{ frame : Int, data : String }>;
 
 	/**
 		The FBX version that was decoded
@@ -489,30 +489,30 @@ class FbxLibrary {
 			init(c);
 
 		// init properties
-		for( m in FbxTools.getAll(this.root, "Objects.Model") ) {
-			for( p in FbxTools.getAll(m, "Properties70.P") )
-				switch( FbxTools.toString(p.props[0]) ) {
-				case "UDP3DSMAX":
-					var userProps = FbxTools.toString(p.props[4]).split("&cr;&lf;");
-					for( p in userProps ) {
-						var pl = p.split("=");
-						var pname = StringTools.trim(pl.shift());
-						var pval = StringTools.trim(pl.join("="));
-						switch( pname ) {
-						case "UV" if( pval != "" ):
-							var xml = try Xml.parse(pval) catch( e : Dynamic ) throw "Invalid UV data in " + FbxTools.getName(m);
-							var frames = [for( f in new haxe.xml.Access(xml.firstElement()).elements ) { var f = f.innerData.split(" ");  { t : Std.parseFloat(f[0]) * 9622116.25, u : Std.parseFloat(f[1]), v : Std.parseFloat(f[2]) }} ];
-							if( uvAnims == null ) uvAnims = new Map();
-							uvAnims.set(FbxTools.getName(m), frames);
-						case "Events":
-							var xml = try Xml.parse(pval) catch( e : Dynamic ) throw "Invalid Events data in " + FbxTools.getName(m);
-							animationEvents = [for( f in new haxe.xml.Access(xml.firstElement()).elements ) { var f = f.innerData.split(" ");  { frame : Std.parseInt(f.shift()), data : StringTools.trim(f.join(" ")) }} ];
-						default:
-						}
-					}
-				default:
-				}
-		}
+		// for( m in FbxTools.getAll(this.root, "Objects.Model") ) {
+		// 	for( p in FbxTools.getAll(m, "Properties70.P") )
+		// 		switch( FbxTools.toString(p.props[0]) ) {
+		// 		case "UDP3DSMAX":
+		// 			var userProps = FbxTools.toString(p.props[4]).split("&cr;&lf;");
+		// 			for( p in userProps ) {
+		// 				var pl = p.split("=");
+		// 				var pname = StringTools.trim(pl.shift());
+		// 				var pval = StringTools.trim(pl.join("="));
+		// 				switch( pname ) {
+		// 				case "UV" if( pval != "" ):
+		// 					var xml = try Xml.parse(pval) catch( e : Dynamic ) throw "Invalid UV data in " + FbxTools.getName(m);
+		// 					var frames = [for( f in new haxe.xml.Access(xml.firstElement()).elements ) { var f = f.innerData.split(" ");  { t : Std.parseFloat(f[0]) * 9622116.25, u : Std.parseFloat(f[1]), v : Std.parseFloat(f[2]) }} ];
+		// 					if( uvAnims == null ) uvAnims = new Map();
+		// 					uvAnims.set(FbxTools.getName(m), frames);
+		// 				case "Events":
+		// 					var xml = try Xml.parse(pval) catch( e : Dynamic ) throw "Invalid Events data in " + FbxTools.getName(m);
+		// 					animationEvents = [for( f in new haxe.xml.Access(xml.firstElement()).elements ) { var f = f.innerData.split(" ");  { frame : Std.parseInt(f.shift()), data : StringTools.trim(f.join(" ")) }} ];
+		// 				default:
+		// 				}
+		// 			}
+		// 		default:
+		// 		}
+		// }
 	}
 
 	function init( n : FbxNode ) {
