@@ -44,13 +44,8 @@ class PngWriter {
 			case CHeader(h):
 				var b = new haxe.io.BytesOutput();
 				b.bigEndian = true;
-				#if haxe3
 				b.writeInt32(h.width);
 				b.writeInt32(h.height);
-				#else
-				b.writeUInt30(h.width);
-				b.writeUInt30(h.height);
-				#end
 				b.writeByte(h.colbits);
 				b.writeByte(switch( h.color ) {
 					case ColGrey(alpha): alpha ? 4 : 0;
@@ -73,27 +68,15 @@ class PngWriter {
 	}
 
 	function writeChunk( id : String, data : haxe.io.Bytes ) {
-		#if haxe3
 		o.writeInt32(data.length);
-		#else
-		o.writeUInt30(data.length);
-		#end
 		o.writeString(id);
 		o.write(data);
 		// compute CRC
-		#if haxe3
 		var crc = new haxe.crypto.Crc32();
 		for( i in 0...4 )
 			crc.byte(id.charCodeAt(i));
 		crc.update(data, 0, data.length);
 		o.writeInt32(crc.get());
-		#else
-		var crc = new format.tools.CRC32();
-		for( i in 0...4 )
-			crc.byte(id.charCodeAt(i));
-		crc.run(data);
-		o.writeInt32(crc.get());
-		#end
 	}
 
 }

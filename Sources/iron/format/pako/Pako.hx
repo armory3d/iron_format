@@ -12,7 +12,6 @@ import iron.format.pako.zlib.Constants;
 import iron.format.pako.zlib.Constants.CompressionLevel;
 import iron.format.pako.zlib.GZHeader;
 
-
 class Pako
 {
   /** Version of ported pako lib (https://github.com/nodeca/pako). */
@@ -67,34 +66,6 @@ class Pako
 
 
   /**
-   * deflateRaw(data[, options]) -> Uint8Array|Array|String
-   * - data (Uint8Array|Array|String): input data to compress.
-   * - options (Object): zlib deflate options.
-   *
-   * The same as [[deflate]], but creates raw data, without wrapper
-   * (header and adler32 crc).
-   **/
-  static public function deflateRaw(input:UInt8Array, ?options:DeflateOptions) {
-    if (options == null) options = { };
-    options.raw = true;
-    return deflate(input, options);
-  }
-
-
-  /**
-   * gzip(data[, options]) -> Uint8Array|Array|String
-   * - data (Uint8Array|Array|String): input data to compress.
-   * - options (Object): zlib deflate options.
-   *
-   * The same as [[deflate]], but create gzip wrapper instead of
-   * deflate one.
-   **/
-  static public function gzip(input:UInt8Array, ?options:DeflateOptions) {
-    if (options == null) options = { };
-    options.gzip = true;
-    return deflate(input, options);
-  }
-  /**
    * inflate(data[, options]) -> Uint8Array|Array|String
    * - data (Uint8Array|Array|String): input data to decompress.
    * - options (Object): zlib inflate options.
@@ -146,30 +117,6 @@ class Pako
     return inflator.result;
   }
 
-
-  /**
-   * inflateRaw(data[, options]) -> Uint8Array|Array|String
-   * - data (Uint8Array|Array|String): input data to decompress.
-   * - options (Object): zlib inflate options.
-   *
-   * The same as [[inflate]], but creates raw data, without wrapper
-   * (header and adler32 crc).
-   **/
-  static public function inflateRaw(input:UInt8Array, ?options:InflateOptions) {
-    if (options == null) options = { };
-    options.raw = true;
-    return inflate(input, options);
-  }
-
-
-  /**
-   * ungzip(data[, options]) -> Uint8Array|Array|String
-   * - data (Uint8Array|Array|String): input data to decompress.
-   * - options (Object): zlib inflate options.
-   *
-   * Just shortcut to [[inflate]], because it autodetects format
-   * by header.content. Done for convenience.
-   **/
 }
 
 /*
