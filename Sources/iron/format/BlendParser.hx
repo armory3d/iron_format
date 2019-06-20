@@ -30,9 +30,14 @@ class BlendParser {
 	public function new(blob:Blob) {
 		this.blob = blob;
 		this.pos = 0;
-
-		if (readChars(7) == 'BLENDER') parse();
-		// else decompress();
+		if (readChars(7) != 'BLENDER') {
+			var input = haxe.io.UInt8Array.fromBytes(blob.toBytes());
+			var output = iron.format.pako.Pako.inflate(input);
+			this.blob = kha.Blob.fromBytes(output.view.buffer);
+			this.pos = 0;
+			if (readChars(7) != 'BLENDER') return;
+		}
+		parse();
 	}
 
 	public function dir(type:String):Array<String> {
