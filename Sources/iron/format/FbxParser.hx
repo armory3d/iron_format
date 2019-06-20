@@ -1,9 +1,9 @@
-package iron.format.fbx;
+package iron.format;
 
-import iron.format.fbx.Library;
+import iron.format.FbxLibrary;
 
-@:access(iron.format.fbx.Library)
-@:access(iron.format.fbx.Geometry)
+@:access(iron.format.FbxLibrary)
+@:access(iron.format.Geometry)
 class FbxParser {
 
 	public var posa:kha.arrays.Int16Array = null;
@@ -36,8 +36,8 @@ class FbxParser {
 		for (i in 0...magic.length) s += String.fromCharCode(blob.readU8(i));
 		binary = s == magic;
 
-		var fbx = binary ? BinaryParser.parse(blob) : Parser.parse(blob.toString());
-		var lib = new Library();
+		var fbx = binary ? FbxBinaryParser.parse(blob) : Parser.parse(blob.toString());
+		var lib = new FbxLibrary();
 		try { lib.load(fbx); }
 		catch(e:Dynamic) { trace(e); }
 

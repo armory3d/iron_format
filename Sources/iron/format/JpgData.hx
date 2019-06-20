@@ -27,9 +27,9 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
  */
-package iron.format.jpg;
+package iron.format;
 
-typedef Data = {
+typedef JpgData = {
 	var width : Int;
 	var height : Int;
 	var quality : Float;

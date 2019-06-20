@@ -1,9 +1,9 @@
 // Based on miniexr.cpp - public domain - 2013 Aras Pranckevicius / Unity Technologies
 // https://github.com/aras-p/miniexr
 // https://www.openexr.com/documentation/openexrfilelayout.pdf
-package iron.format.exr;
+package iron.format;
 
-class Writer {
+class ExrWriter {
 
 	public function new(out:haxe.io.BytesOutput, width:Int, height:Int, src:haxe.io.Bytes, bits = 16, type = 1, off = 0) {
 		out.writeByte(0x76); // magic

@@ -1,8 +1,8 @@
-package iron.format.fbx;
+package iron.format;
 
-import iron.format.fbx.Library;
+import iron.format.FbxLibrary;
 
-class BinaryParser {
+class FbxBinaryParser {
 
 	var pos:Int;
 	var blob:kha.Blob;
@@ -25,7 +25,7 @@ class BinaryParser {
 	}
 
 	public static function parse(blob:kha.Blob):FbxNode {
-		return new BinaryParser(blob).root;
+		return new FbxBinaryParser(blob).root;
 	}
 
 	function parseArray(readVal:Void->Dynamic, isFloat = false):FbxProp {

@@ -1,4 +1,4 @@
-package iron.format.obj;
+package iron.format;
 
 class ObjParser {
 

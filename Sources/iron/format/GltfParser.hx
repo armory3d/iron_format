@@ -1,4 +1,4 @@
-package iron.format.gltf;
+package iron.format;
 
 class GltfParser {
 

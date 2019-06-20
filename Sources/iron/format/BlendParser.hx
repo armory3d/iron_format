@@ -4,16 +4,16 @@
 // https://github.com/fschutt/mystery-of-the-blend-backup
 // https://web.archive.org/web/20170630054951/http://www.atmind.nl/blender/mystery_ot_blend.html
 // Usage:
-// var bl = new Blend(blob:kha.Blob);
+// var bl = new BlendParser(blob:kha.Blob);
 // trace(bl.dir("Scene"));
 // var scenes = bl.get("Scene");
 // trace(scenes[0].get("id").get("name"));
-package iron.format.blend;
+package iron.format;
 
 // https://github.com/Kode/Kha
 import kha.Blob;
 
-class Blend {
+class BlendParser {
 
 	public var pos:Int;
 	var blob:Blob;
@@ -287,7 +287,7 @@ class Blend {
 }
 
 class Block {
-	public var blend:Blend;
+	public var blend:BlendParser;
 	public var code:String;
 	public var size:Int;
 	public var sdnaIndex:Int;
@@ -373,7 +373,7 @@ class Handle {
 				}
 				// Structure
 				var h = new Handle();
-				h.ds = Blend.getStruct(dna, typeIndex);
+				h.ds = BlendParser.getStruct(dna, typeIndex);
 				var isPointer = dnaName.charAt(0) == '*';
 				if (isPointer) {
 					block.blend.pos = block.pos + newOffset;

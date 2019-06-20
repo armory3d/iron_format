@@ -20,7 +20,7 @@
 // COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-package iron.format.fbx;
+package iron.format;
 
 enum FbxProp {
 	PInt( v : Int );
@@ -450,7 +450,7 @@ class Parser {
 	}
 }
 
-class Library {
+class FbxLibrary {
 
 	var root : FbxNode;
 	var ids : Map<Int,FbxNode>;
@@ -592,7 +592,7 @@ class Library {
 
 class Geometry {
 
-	var lib : Library;
+	var lib : FbxLibrary;
 	var root : FbxNode;
 
 	public function new(l, root) {
